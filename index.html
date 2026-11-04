@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PTSP Online MTsN 3 Banyuwangi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans pb-28">
+
+  <!-- Top Bar Navigasi Login -->
+  <div class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <span>📧 Email Resmi: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
+      <div>
+        <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded font-semibold transition">
+          🔐 Login Sistem
+        </button>
+        <button id="btnLogout" onclick="logout()" class="hidden bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-semibold transition">
+          Keluar (Logout)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Utama -->
+  <header class="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white py-8 px-4 shadow-lg text-center">
+    <div class="max-w-3xl mx-auto flex flex-col items-center">
+      <img 
+        src="https://drive.google.com/thumbnail?id=1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h&sz=w400" 
+        onerror="this.src='https://lh3.googleusercontent.com/d/1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h'"
+        alt="Logo MTsN 3 Banyuwangi" 
+        class="w-24 h-24 object-contain bg-white p-2 rounded-full shadow-md mb-3"
+      >
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-wide">PTSP Online MTsN 3 Banyuwangi</h1>
+      <p class="text-emerald-100 text-base md:text-lg mt-1">Pelayanan Terpadu Satu Pintu Online</p>
+
+      <button 
+        onclick="toggleTracking()" 
+        class="mt-5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-2.5 rounded-full shadow-md transition flex items-center gap-2 text-sm"
+      >
+        🔍 Tracking Layanan
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- ================= HALAMAN PUBLIK ================= -->
+    <div id="publicView">
+      <!-- Panel Tracking Layanan -->
+      <div id="panelTracking" class="hidden mb-8 bg-white p-6 rounded-2xl shadow-md border-2 border-amber-400">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-bold">Lacak Status Layanan</h2>
+          <button onclick="toggleTracking()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">Tutup ✕</button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Masukkan Kode Layanan yang telah dikirimkan ke alamat Email Anda.</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input id="inputTiket" type="text" placeholder="Contoh: PTSP-20261104-1234" class="flex-1 border rounded-xl px-4 py-2.5 text-sm">
+          <button onclick="cekStatus()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl text-sm font-semibold">
+            Cek Status
+          </button>
+        </div>
+        <div id="hasilLacak" class="hidden mt-4 p-4 rounded-xl bg-slate-50 border"></div>
+      </div>
+
+      <!-- Katalog Menu Layanan -->
+      <div class="text-center mb-6">
+        <h2 class="text-xl font-bold">Daftar Menu Layanan</h2>
+        <p class="text-sm text-slate-500">Pilih layanan di bawah ini untuk membaca persyaratan dan mengisi formulir permohonan</p>
+      </div>
+
+      <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"></div>
+
+      <!-- Formulir Pengajuan Layanan -->
+      <div id="formContainer" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200">
+        <span id="badgeKategori" class="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-100 text-emerald-800"></span>
+        <h3 id="judulLayanan" class="text-xl font-bold text-emerald-800 mt-2 mb-4"></h3>
+
+        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6">
+          <p class="font-bold text-amber-900 text-sm mb-1">📋 Persyaratan Layanan:</p>
+          <ul id="listSyarat" class="list-disc list-inside text-sm text-amber-900 space-y-1"></ul>
+        </div>
+
+        <form id="ptspForm" onsubmit="kirimPermohonan(event)" class="space-y-4">
+          <input type="hidden" id="kategoriVal">
+          <input type="hidden" id="layananVal">
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-1">Nama Lengkap Pemohon <span class="text-red-500">*</span></label>
+              <input type="text" id="nama" required placeholder="Nama lengkap" class="w-full border rounded-xl px-3.5 py-2 text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Alamat Email Aktif <span class="text-red-500">*</span></label>
+              <input type="email" id="email" required placeholder="nama@email.com" class="w-full border rounded-xl px-3.5 py-2 text-sm">
+              <span class="text-xs text-emerald-700 mt-1 block">Kode Layanan akan dikirim otomatis ke Email ini.</span>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
+              <input type="tel" id="whatsapp" required placeholder="08123456789" class="w-full border rounded-xl px-3.5 py-2 text-sm">
+              <span class="text-xs text-slate-500 mt-1 block">Digunakan petugas jika perlu konfirmasi berkas.</span>
+            </div>
+          </div>
+
+          <div id="dynamicFields" class="space-y-4"></div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1">Unggah Berkas Persyaratan (PDF/JPG/PNG) <span class="text-red-500">*</span></label>
+            <input type="file" id="berkas" accept=".pdf,.jpg,.jpeg,.png" required class="w-full border rounded-xl px-3.5 py-2 text-sm bg-slate-50">
+          </div>
+
+          <button type="submit" id="btnSubmit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 py-3 rounded-xl shadow transition">
+            Kirim Permohonan Layanan
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD ADMIN ================= -->
+    <div id="adminView" class="hidden space-y-8">
+      <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold text-emerald-900">Panel Administrator</h2>
+          <p class="text-xs text-emerald-700">Kelola konfigurasi Fonnte, Nomor WA Petugas, Email Pengirim, dan Daftar Layanan</p>
+        </div>
+      </div>
+
+      <!-- Pengaturan Sistem -->
+      <div class="bg-white p-6 rounded-2xl shadow border">
+        <h3 class="font-bold text-base mb-4 border-b pb-2">⚙️ Pengaturan Sistem & Notifikasi</h3>
+        <form onsubmit="simpanPengaturan(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold mb-1">Token Fonnte</label>
+            <input type="text" id="setFonnte" required class="w-full border rounded-lg px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">No. WA Admin / Petugas (Awali 62)</label>
+            <input type="text" id="setWaAdmin" required placeholder="6281234567890" class="w-full border rounded-lg px-3 py-2 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Email Pengirim / Admin</label>
+            <input type="email" id="setEmailAdmin" required class="w-full border rounded-lg px-3 py-2 text-sm">
+          </div>
+          <div class="md:col-span-3">
+            <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg">
+              Simpan Pengaturan
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Manajemen Layanan (Tambah / Edit / Hapus) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow border">
+          <h3 id="formLayananTitle" class="font-bold text-base mb-4 border-b pb-2">➕ Tambah / Edit Layanan</h3>
+          <form id="formKelolaLayanan" onsubmit="simpanLayanan(event)" class="space-y-3">
+            <input type="hidden" id="editIdLayanan">
+            <div>
+              <label class="block text-xs font-bold mb-1">Kategori Pemohon</label>
+              <select id="editKategori" class="w-full border rounded-lg px-3 py-2 text-sm">
+                <option value="Layanan Murid">Layanan Murid</option>
+                <option value="Layanan Wali Murid">Layanan Wali Murid</option>
+                <option value="Masyarakat / Organisasi">Masyarakat / Organisasi</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Nama Layanan</label>
+              <input type="text" id="editNamaLayanan" required placeholder="Contoh: Legalisir Ijazah" class="w-full border rounded-lg px-3 py-2 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Daftar Persyaratan (Pisahkan per baris / Enter)</label>
+              <textarea id="editSyarat" rows="3" required placeholder="Scan Ijazah Asli&#10;Mengisi Tahun Lulus" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">Kolom Input Tambahan pada Form (Pisahkan per baris / Enter)</label>
+              <textarea id="editFields" rows="3" required placeholder="NISN&#10;Tahun Lulus&#10;Keperluan" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg">
+                Simpan Layanan
+              </button>
+              <button type="button" onclick="resetFormLayanan()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold px-4 py-2 rounded-lg">
+                Batal / Reset
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow border">
+          <h3 class="font-bold text-base mb-4 border-b pb-2">📋 Daftar Layanan Aktif</h3>
+          <div id="adminListLayanan" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD PETUGAS ================= -->
+    <div id="petugasView" class="hidden space-y-6">
+      <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+        <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
+        <p class="text-xs text-blue-700">Verifikasi berkas pengajuan dan perbarui status layanan (Email otomatis terkirim ke pemohon saat disimpan)</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b">
+              <th class="p-3">Kode & Tanggal</th>
+              <th class="p-3">Pemohon & Kontak</th>
+              <th class="p-3">Layanan & Rincian</th>
+              <th class="p-3">Berkas</th>
+              <th class="p-3">Status & Link Hasil</th>
+              <th class="p-3">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelPetugas" class="divide-y"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD PIMPINAN ================= -->
+    <div id="pimpinanView" class="hidden space-y-6">
+      <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
+        <h2 class="text-lg font-bold text-amber-900">Dashboard Monitoring Pimpinan</h2>
+        <p class="text-xs text-amber-800">Rekapitulasi dan pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi</p>
+      </div>
+
+      <!-- Kartu Statistik -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statCardsPimpinan"></div>
+
+      <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b">
+              <th class="p-3">Kode Layanan</th>
+              <th class="p-3">Tanggal</th>
+              <th class="p-3">Nama Pemohon</th>
+              <th class="p-3">Kategori & Layanan</th>
+              <th class="p-3">Status</th>
+              <th class="p-3">Dokumen</th>
+            </tr>
+          </thead>
+          <tbody id="tabelPimpinan" class="divide-y"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal Login (Dropdown User) -->
+  <div id="modalLogin" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-lg text-emerald-800">Login Sistem PTSP</h3>
+        <button onclick="toggleModalLogin()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+      <form onsubmit="prosesLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold mb-1">Pilih User</label>
+          <select id="loginRole" class="w-full border rounded-xl px-3 py-2.5 text-sm font-medium bg-slate-50">
+            <option value="admin">Admin</option>
+            <option value="petugas">Petugas</option>
+            <option value="pimpinan">Pimpinan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold mb-1">Password</label>
+          <input type="password" id="loginPassword" required placeholder="Masukkan password..." class="w-full border rounded-xl px-3 py-2.5 text-sm">
+        </div>
+        <button type="submit" id="btnLoginSubmit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl transition">
+          Masuk
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tombol Floating WA Layanan Bantuan (Tengah Bawah) -->
+  <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
+    <a 
+      id="linkBantuanWA"
+      href="https://wa.me/6281234567890?text=Assalamualaikum,%20saya%20ingin%20meminta%20bantuan%20terkait%20PTSP%20Online%20MTsN%203%20Banyuwangi." 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full shadow-xl border-2 border-white transition transform hover:scale-105"
+    >
+      <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.535 5.86l-1.535 5.605 5.751-1.509c1.693.903 3.621 1.416 5.672 1.416 6.627 0 12-5.373 12-12 0-6.627-5.373-11.372-11.423-11.372z"/>
+      </svg>
+      <span class="font-bold text-sm tracking-wide">Layanan Bantuan</span>
+    </a>
+  </div>
+
+  <script>
+    // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwK7tWBgjg5f_43AcMSmeJ_P3gMoSnYMxr1hXxhUlG-3F-wpiJR1IdHrwmelZqQdiOb/exec';
+
+    let currentRole = null;
+    let currentPassword = null;
+    let daftarLayanan = [
+      {
+        id: 'LAY-001',
+        kategori: 'Layanan Murid',
+        nama: 'Surat Keterangan Aktif Siswa',
+        syarat: ['Menyiapkan NISN dan data kelas saat ini', 'Unggah scan/foto Kartu Pelajar atau KK'],
+        fields: ['NISN Siswa', 'Kelas Saat Ini (Contoh: VIII-A)', 'Keperluan Pembuatan Surat']
+      },
+      {
+        id: 'LAY-002',
+        kategori: 'Layanan Wali Murid',
+        nama: 'Permohonan Mutasi / Pindah Siswa',
+        syarat: ['Surat permohonan pindah dari orang tua/wali', 'Scan Rapor semester terakhir'],
+        fields: ['Nama Lengkap Siswa', 'Kelas', 'Nama Sekolah Tujuan / Asal', 'Alasan Mutasi']
+      },
+      {
+        id: 'LAY-003',
+        kategori: 'Masyarakat / Organisasi',
+        nama: 'Izin Penelitian / Observasi / Magang',
+        syarat: ['Surat Pengantar Resmi dari Kampus / Instansi', 'Proposal Singkat Kegiatan'],
+        fields: ['Nama Kampus / Instansi', 'Judul Penelitian / Kegiatan', 'Rencana Tanggal Pelaksanaan']
+      }
+    ];
+
+    // Muat data awal dari GAS saat halaman dibuka
+    window.addEventListener('DOMContentLoaded', async () => {
+      renderKatalogPublik();
+      try {
+        const res = await fetch(`${GAS_URL}?action=init`);
+        const data = await res.json();
+        if (data.status === 'success') {
+          if (data.layanan && data.layanan.length > 0) {
+            daftarLayanan = data.layanan;
+            renderKatalogPublik();
+          }
+          if (data.waAdmin) updateLinkBantuan(data.waAdmin);
+          if (data.emailAdmin) document.getElementById('labelEmailHeader').innerText = data.emailAdmin;
+        }
+      } catch (e) {
+        console.log('Menggunakan katalog default sebelum GAS terhubung.');
+      }
+    });
+
+    function updateLinkBantuan(nomor) {
+      const bersih = String(nomor).replace(/[^0-9]/g, '');
+      document.getElementById('linkBantuanWA').href =
+        `https://wa.me/${bersih}?text=${encodeURIComponent('Assalamualaikum, saya ingin meminta bantuan terkait PTSP Online MTsN 3 Banyuwangi.')}`;
+    }
+
+    function renderKatalogPublik() {
+      const menuGrid = document.getElementById('menuGrid');
+      menuGrid.innerHTML = '';
+      daftarLayanan.forEach((item, index) => {
+        menuGrid.innerHTML += `
+          <div onclick="pilihLayanan(${index})" class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 hover:border-emerald-600 transition flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">${item.kategori}</span>
+              <h3 class="font-bold text-base text-slate-800 mt-3">${item.nama}</h3>
+            </div>
+            <p class="text-xs text-emerald-700 font-semibold mt-4">Pilih Layanan &rarr;</p>
+          </div>
+        `;
+      });
+    }
+
+    function pilihLayanan(index) {
+      const item = daftarLayanan[index];
+      document.getElementById('formContainer').classList.remove('hidden');
+      document.getElementById('badgeKategori').innerText = item.kategori;
+      document.getElementById('judulLayanan').innerText = item.nama;
+      document.getElementById('kategoriVal').value = item.kategori;
+      document.getElementById('layananVal').value = item.nama;
+
+      document.getElementById('listSyarat').innerHTML = item.syarat.map(s => `<li>${s}</li>`).join('');
+      document.getElementById('dynamicFields').innerHTML = item.fields.map(label => `
+        <div>
+          <label class="block text-sm font-semibold mb-1">${label} <span class="text-red-500">*</span></label>
+          <input type="text" data-label="${label}" required class="dyn-input w-full border rounded-xl px-3.5 py-2 text-sm">
+        </div>
+      `).join('');
+
+      document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleTracking() {
+      document.getElementById('panelTracking').classList.toggle('hidden');
+    }
+
+    function toggleModalLogin() {
+      document.getElementById('modalLogin').classList.toggle('hidden');
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = err => reject(err);
+      });
+    }
+
+    // Submit Permohonan oleh Masyarakat/Murid/Wali
+    async function kirimPermohonan(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerText = 'Sedang Mengirim Permohonan...';
+
+      try {
+        const fileInput = document.getElementById('berkas').files[0];
+        const base64File = await fileToBase64(fileInput);
+
+        const detailTambahan = {};
+        document.querySelectorAll('.dyn-input').forEach(inp => {
+          detailTambahan[inp.getAttribute('data-label')] = inp.value;
+        });
+
+        const payload = {
+          action: 'submitPermohonan',
+          kategori: document.getElementById('kategoriVal').value,
+          layanan: document.getElementById('layananVal').value,
+          nama: document.getElementById('nama').value,
+          email: document.getElementById('email').value,
+          whatsapp: document.getElementById('whatsapp').value,
+          detailTambahan: detailTambahan,
+          fileName: fileInput.name,
+          fileType: fileInput.type,
+          fileData: base64File
+        };
+
+        const res = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          alert(`Permohonan Berhasil Dikirim!\n\nKode Layanan Anda: ${result.tiket}\nKode ini juga telah dikirim ke alamat Email Anda (${payload.email}).`);
+          document.getElementById('ptspForm').reset();
+          document.getElementById('formContainer').classList.add('hidden');
+        } else {
+          alert('Gagal mengirim: ' + result.message);
+        }
+      } catch (err) {
+        alert('Gagal terhubung ke server GAS. Pastikan GAS_URL sudah benar.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Kirim Permohonan Layanan';
+      }
+    }
+
+    // Cek Status Layanan
+    async function cekStatus() {
+      const tiket = document.getElementById('inputTiket').value.trim();
+      if (!tiket) return alert('Masukkan Kode Layanan terlebih dahulu!');
+      const box = document.getElementById('hasilLacak');
+      box.classList.remove('hidden');
+      box.innerHTML = 'Memeriksa data...';
+
+      try {
+        const res = await fetch(`${GAS_URL}?action=track&tiket=${encodeURIComponent(tiket)}`);
+        const result = await res.json();
+        if (result.status === 'success') {
+          const d = result.data;
+          box.innerHTML = `
+            <div class="space-y-1 text-sm">
+              <p><strong>Kode Layanan:</strong> ${d.kode}</p>
+              <p><strong>Nama Pemohon:</strong> ${d.nama}</p>
+              <p><strong>Jenis Layanan:</strong> ${d.layanan}</p>
+              <p><strong>Status Saat Ini:</strong> <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">${d.status}</span></p>
+              ${d.linkHasil && d.linkHasil !== '-' && d.linkHasil.startsWith('http') ? `<p class="pt-2"><a href="${d.linkHasil}" target="_blank" class="bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold">📥 Unduh Dokumen Hasil</a></p>` : ''}
+            </div>
+          `;
+        } else {
+          box.innerHTML = `<p class="text-red-600 text-sm font-semibold">${result.message}</p>`;
+        }
+      } catch (e) {
+        box.innerHTML = '<p class="text-red-600 text-sm">Gagal memeriksa status.</p>';
+      }
+    }
+
+    // Proses Login Multi-User
+    async function prosesLogin(e) {
+      e.preventDefault();
+      const role = document.getElementById('loginRole').value;
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+      btn.innerText = 'Memverifikasi...';
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'login', role, password })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          currentRole = role;
+          currentPassword = password;
+          document.getElementById('modalLogin').classList.add('hidden');
+          document.getElementById('loginPassword').value = '';
+          document.getElementById('publicView').classList.add('hidden');
+          document.getElementById('btnOpenLogin').classList.add('hidden');
+          document.getElementById('btnLogout').classList.remove('hidden');
+
+          if (role === 'admin') {
+            document.getElementById('adminView').classList.remove('hidden');
+            if (result.settings) {
+              document.getElementById('setFonnte').value = result.settings.FONNTE_TOKEN || '';
+              document.getElementById('setWaAdmin').value = result.settings.WA_ADMIN || '';
+              document.getElementById('setEmailAdmin').value = result.settings.EMAIL_ADMIN || '';
+            }
+            daftarLayanan = result.layanan || [];
+            renderAdminLayanan();
+          } else if (role === 'petugas') {
+            document.getElementById('petugasView').classList.remove('hidden');
+            renderTabelPetugas(result.permohonan || []);
+          } else if (role === 'pimpinan') {
+            document.getElementById('pimpinanView').classList.remove('hidden');
+            renderDashboardPimpinan(result.permohonan || []);
+          }
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        alert('Gagal terhubung ke server GAS.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Masuk';
+      }
+    }
+
+    function logout() {
+      currentRole = null;
+      currentPassword = null;
+      document.getElementById('adminView').classList.add('hidden');
+      document.getElementById('petugasView').classList.add('hidden');
+      document.getElementById('pimpinanView').classList.add('hidden');
+      document.getElementById('publicView').classList.remove('hidden');
+      document.getElementById('btnOpenLogin').classList.remove('hidden');
+      document.getElementById('btnLogout').classList.add('hidden');
+      renderKatalogPublik();
+    }
+
+    // Fungsi Admin: Simpan Pengaturan
+    async function simpanPengaturan(e) {
+      e.preventDefault();
+      const payload = {
+        action: 'saveSettings',
+        password: currentPassword,
+        fonnteToken: document.getElementById('setFonnte').value.trim(),
+        waAdmin: document.getElementById('setWaAdmin').value.trim(),
+        emailAdmin: document.getElementById('setEmailAdmin').value.trim()
+      };
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      alert(result.message);
+      updateLinkBantuan(payload.waAdmin);
+      document.getElementById('labelEmailHeader').innerText = payload.emailAdmin;
+    }
+
+    // Fungsi Admin: Render & CRUD Layanan
+    function renderAdminLayanan() {
+      const container = document.getElementById('adminListLayanan');
+      container.innerHTML = '';
+      daftarLayanan.forEach((item, idx) => {
+        container.innerHTML += `
+          <div class="p-3 border rounded-xl bg-slate-50 flex justify-between items-start gap-2">
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">${item.kategori}</span>
+              <h4 class="font-bold text-sm mt-1">${item.nama}</h4>
+              <p class="text-xs text-slate-500">Syarat: ${item.syarat.length} item | Input: ${item.fields.length} kolom</p>
+            </div>
+            <div class="flex gap-1.5">
+              <button onclick="isiEditLayanan(${idx})" class="bg-amber-500 text-white px-2.5 py-1 rounded text-xs font-semibold">Edit</button>
+              <button onclick="hapusLayanan('${item.id}')" class="bg-red-600 text-white px-2.5 py-1 rounded text-xs font-semibold">Hapus</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function isiEditLayanan(idx) {
+      const item = daftarLayanan[idx];
+      document.getElementById('formLayananTitle').innerText = '✏️ Edit Layanan: ' + item.nama;
+      document.getElementById('editIdLayanan').value = item.id;
+      document.getElementById('editKategori').value = item.kategori;
+      document.getElementById('editNamaLayanan').value = item.nama;
+      document.getElementById('editSyarat').value = item.syarat.join('\n');
+      document.getElementById('editFields').value = item.fields.join('\n');
+    }
+
+    function resetFormLayanan() {
+      document.getElementById('formLayananTitle').innerText = '➕ Tambah Layanan Baru';
+      document.getElementById('formKelolaLayanan').reset();
+      document.getElementById('editIdLayanan').value = '';
+    }
+
+    async function simpanLayanan(e) {
+      e.preventDefault();
+      const syaratArr = document.getElementById('editSyarat').value.split('\n').map(s => s.trim()).filter(Boolean);
+      const fieldsArr = document.getElementById('editFields').value.split('\n').map(f => f.trim()).filter(Boolean);
+
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'saveLayanan',
+          password: currentPassword,
+          idLayanan: document.getElementById('editIdLayanan').value,
+          kategori: document.getElementById('editKategori').value,
+          nama: document.getElementById('editNamaLayanan').value,
+          syarat: syaratArr,
+          fields: fieldsArr
+        })
+      });
+      const result = await res.json();
+      if (result.status === 'success') {
+        daftarLayanan = result.layanan;
+        renderAdminLayanan();
+        resetFormLayanan();
+        alert('Data layanan berhasil disimpan!');
+      }
+    }
+
+    async function hapusLayanan(idLayanan) {
+      if (!confirm('Yakin ingin menghapus layanan ini?')) return;
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'deleteLayanan', password: currentPassword, idLayanan })
+      });
+      const result = await res.json();
+      if (result.status === 'success') {
+        daftarLayanan = result.layanan;
+        renderAdminLayanan();
+      }
+    }
+
+    // Fungsi Petugas: Render & Update Status Permohonan
+    function renderTabelPetugas(list) {
+      const tbody = document.getElementById('tabelPetugas');
+      tbody.innerHTML = '';
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada pengajuan layanan.</td></tr>';
+        return;
+      }
+      list.forEach((item, i) => {
+        const rincian = Object.entries(item.detail || {}).map(([k, v]) => `<b>${k}:</b> ${v}`).join('<br>');
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">${item.tanggal}</span></td>
+            <td class="p-3"><b>${item.nama}</b><br>${item.email}<br>WA: ${item.whatsapp}</td>
+            <td class="p-3"><span class="font-semibold text-emerald-800">${item.layanan}</span><br><div class="mt-1 text-slate-600">${rincian}</div></td>
+            <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline font-semibold">Lihat Berkas</a>` : '-'}</td>
+            <td class="p-3 space-y-1.5">
+              <select id="status_${i}" class="border rounded px-2 py-1 w-full">
+                <option value="Menunggu Verifikasi" ${item.status === 'Menunggu Verifikasi' ? 'selected' : ''}>Menunggu Verifikasi</option>
+                <option value="Sedang Diproses" ${item.status === 'Sedang Diproses' ? 'selected' : ''}>Sedang Diproses</option>
+                <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                <option value="Ditolak" ${item.status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+              </select>
+              <input type="text" id="hasil_${i}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Link dokumen hasil / catatan" class="border rounded px-2 py-1 w-full">
+            </td>
+            <td class="p-3">
+              <button onclick="simpanStatusPetugas('${item.kode}', ${i})" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded font-bold">
+                Simpan
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function simpanStatusPetugas(kode, index) {
+      const statusBaru = document.getElementById(`status_${index}`).value;
+      const linkHasil = document.getElementById(`hasil_${index}`).value.trim() || '-';
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'updateStatus',
+          password: currentPassword,
+          kode,
+          statusBaru,
+          linkHasil
+        })
+      });
+      const result = await res.json();
+      if (result.status === 'success') {
+        alert(`Status layanan ${kode} berhasil diperbarui menjadi "${statusBaru}" dan notifikasi Email telah dikirim ke pemohon.`);
+        renderTabelPetugas(result.permohonan);
+      }
+    }
+
+    // Fungsi Pimpinan: Render Monitoring & Statistik
+    function renderDashboardPimpinan(list) {
+      const total = list.length;
+      const menunggu = list.filter(x => x.status === 'Menunggu Verifikasi').length;
+      const diproses = list.filter(x => x.status === 'Sedang Diproses').length;
+      const selesai = list.filter(x => x.status === 'Selesai').length;
+
+      document.getElementById('statCardsPimpinan').innerHTML = `
+        <div class="bg-white p-4 rounded-xl shadow border border-slate-200"><p class="text-xs text-slate-500">Total Permohonan</p><p class="text-2xl font-extrabold text-slate-800">${total}</p></div>
+        <div class="bg-white p-4 rounded-xl shadow border border-amber-200"><p class="text-xs text-amber-700">Menunggu Verifikasi</p><p class="text-2xl font-extrabold text-amber-600">${menunggu}</p></div>
+        <div class="bg-white p-4 rounded-xl shadow border border-blue-200"><p class="text-xs text-blue-700">Sedang Diproses</p><p class="text-2xl font-extrabold text-blue-600">${diproses}</p></div>
+        <div class="bg-white p-4 rounded-xl shadow border border-emerald-200"><p class="text-xs text-emerald-700">Layanan Selesai</p><p class="text-2xl font-extrabold text-emerald-600">${selesai}</p></div>
+      `;
+
+      const tbody = document.getElementById('tabelPimpinan');
+      tbody.innerHTML = list.map(item => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-bold">${item.kode}</td>
+          <td class="p-3">${item.tanggal}</td>
+          <td class="p-3"><b>${item.nama}</b><br><span class="text-slate-500">${item.email}</span></td>
+          <td class="p-3"><span class="text-xs bg-slate-100 px-2 py-0.5 rounded">${item.kategori}</span><br><b>${item.layanan}</b></td>
+          <td class="p-3"><span class="font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800">${item.status}</span></td>
+          <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline">Berkas Masuk</a>` : '-'}</td>
+        </tr>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
