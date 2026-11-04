@@ -5,25 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PTSP Online MTsN 3 Banyuwangi</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library Pop-Up Modern SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* Animasi Running Text (Marquee) */
-    @keyframes marqueeText {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+    /* Animasi Running Text Langsung Berjalan Saat Aplikasi Dibuka (Mulai dari 0%) */
+    @keyframes marqueeImmediate {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
     }
     .running-text-wrapper {
       overflow: hidden;
       white-space: nowrap;
       position: relative;
+      display: flex;
+      align-items: center;
     }
-    .running-text-content {
-      display: inline-block;
-      padding-left: 10%;
-      animation: marqueeText 28s linear infinite;
+    .running-text-track {
+      display: inline-flex;
+      width: max-content;
+      animation: marqueeImmediate 24s linear infinite;
     }
-    .running-text-wrapper:hover .running-text-content {
+    .running-text-wrapper:hover .running-text-track {
       animation-play-state: paused;
     }
   </style>
@@ -32,7 +33,7 @@
 
   <!-- Top Bar Navigasi Login -->
   <div class="bg-emerald-950 text-emerald-100 text-xs py-2.5 px-4 shadow-sm">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
       <span>📧 Email Resmi: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
       <div>
         <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold transition shadow">
@@ -47,7 +48,7 @@
 
   <!-- Header Utama -->
   <header class="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-8 pb-6 px-4 shadow-lg text-center">
-    <div class="max-w-4xl mx-auto flex flex-col items-center">
+    <div class="max-w-5xl mx-auto flex flex-col items-center">
       <img 
         src="https://drive.google.com/thumbnail?id=1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h&sz=w400" 
         onerror="this.src='https://lh3.googleusercontent.com/d/1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h'"
@@ -65,16 +66,21 @@
         🔍 Tracking Layanan
       </button>
 
-      <!-- Running Text Pemberitahuan Jam Layanan (Backdrop Hijau & Teks Putih Tebal) -->
-      <div class="w-full mt-5 bg-green-600 border-2 border-green-400 rounded-xl py-2.5 px-3 shadow-inner running-text-wrapper">
-        <div class="running-text-content text-white font-bold text-sm md:text-base tracking-wide">
-          📢 Jam Layanan PTSP: 07.30 sd 15.30 WIB (Hari Kerja: Senin-Jumat) &bull; Permohonan Layanan diluar Jam Layanan, akan diproses keesokan harinya, dan Permohonan Layanan diluar hari kerja, akan diproses pada hari kerja.
+      <!-- Running Text Ukuran Font Besar & Langsung Berjalan Saat Aplikasi Dibuka -->
+      <div class="w-full mt-6 bg-green-600 border-2 border-green-300 rounded-2xl py-3.5 px-4 shadow-md running-text-wrapper">
+        <div class="running-text-track text-white font-extrabold text-lg md:text-2xl tracking-wide">
+          <span class="mx-8">
+            📢 Jam Layanan PTSP: 07.30 sd 15.30 WIB (Hari Kerja: Senin-Jumat) &bull; Permohonan Layanan diluar Jam Layanan, akan diproses keesokan harinya, dan Permohonan Layanan diluar hari kerja, akan diproses pada hari kerja.
+          </span>
+          <span class="mx-8">
+            📢 Jam Layanan PTSP: 07.30 sd 15.30 WIB (Hari Kerja: Senin-Jumat) &bull; Permohonan Layanan diluar Jam Layanan, akan diproses keesokan harinya, dan Permohonan Layanan diluar hari kerja, akan diproses pada hari kerja.
+          </span>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 py-8">
+  <main class="max-w-7xl mx-auto px-4 py-8">
 
     <!-- ================= HALAMAN PUBLIK ================= -->
     <div id="publicView">
@@ -237,13 +243,13 @@
     <div id="petugasView" class="hidden space-y-6">
       <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
-        <p class="text-xs text-blue-700">Ubah status menjadi <strong>Selesai</strong>, tempelkan <strong>Link Dokumen Hasil</strong>, lalu klik <strong>Simpan</strong> untuk mengirim notifikasi dan link dokumen otomatis ke Email pemohon.</p>
+        <p class="text-xs text-blue-700">Ubah status menjadi <strong>Selesai</strong>, tempelkan <strong>Link Dokumen Hasil</strong>, lalu klik <strong>Simpan</strong> untuk mencatat waktu selesai & durasi pengerjaan sekaligus mengirim email ke pemohon.</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
             <tr class="bg-slate-100 text-slate-700 border-b">
-              <th class="p-3">Kode & Tanggal</th>
+              <th class="p-3">Kode & Waktu Masuk</th>
               <th class="p-3">Pemohon & Kontak</th>
               <th class="p-3">Layanan & Rincian</th>
               <th class="p-3">Berkas Masuk</th>
@@ -256,11 +262,11 @@
       </div>
     </div>
 
-    <!-- ================= DASHBOARD PIMPINAN ================= -->
+    <!-- ================= DASHBOARD MONITORING PIMPINAN ================= -->
     <div id="pimpinanView" class="hidden space-y-6">
       <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-amber-900">Dashboard Monitoring Pimpinan</h2>
-        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi secara real-time</p>
+        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi lengkap dengan waktu masuk, waktu selesai, dan durasi pengerjaan</p>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statCardsPimpinan"></div>
@@ -268,13 +274,15 @@
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
-            <tr class="bg-slate-100 text-slate-700 border-b">
-              <th class="p-3">Kode Layanan</th>
-              <th class="p-3">Tanggal</th>
+            <tr class="bg-emerald-800 text-white border-b">
+              <th class="p-3 rounded-tl-xl">Kode Layanan</th>
               <th class="p-3">Nama Pemohon</th>
               <th class="p-3">Kategori & Layanan</th>
+              <th class="p-3">Tanggal Permohonan Layanan Masuk</th>
+              <th class="p-3">Tanggal Permohonan Layanan Selesai</th>
+              <th class="p-3">Durasi Pengerjaan Layanan</th>
               <th class="p-3">Status</th>
-              <th class="p-3">Dokumen</th>
+              <th class="p-3 rounded-tr-xl">Dokumen</th>
             </tr>
           </thead>
           <tbody id="tabelPimpinan" class="divide-y"></tbody>
@@ -329,12 +337,11 @@
 
   <script>
     // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyT08GIfKSv0A3HFw3g_iTHwTmQhSnH0XnghTpkG1PJXEmOHBhjKUXxmdB6x6_8cj1P/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxihgXRh0rlZY69Rlfvo8xjaXpjDuz22SsFYI1XH1tO3KG0iofXb8wCE_MjewbCEp7a/exec';
 
     let currentRole = null;
     let currentPassword = null;
 
-    // Palet Warna-Warni Backdrop Saat Kursor Diarahkan (Hover) ke Tiap Kartu Layanan
     const cardColorThemes = [
       {
         border: 'border-emerald-200 hover:border-emerald-500',
@@ -443,7 +450,6 @@
         `https://wa.me/${bersih}?text=${encodeURIComponent('Assalamualaikum, saya ingin meminta bantuan terkait PTSP Online MTsN 3 Banyuwangi.')}`;
     }
 
-    // Render Kartu Layanan dengan Backdrop Warna-Warni saat Hover, Estimasi, Biaya GRATIS, Toggle Syarat & Tombol Form
     function renderKatalogPublik() {
       const menuGrid = document.getElementById('menuGrid');
       menuGrid.innerHTML = '';
@@ -455,7 +461,6 @@
         menuGrid.innerHTML += `
           <div class="group bg-white ${theme.border} ${theme.hoverBg} p-6 rounded-2xl shadow-sm hover:shadow-2xl border-2 transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between">
             <div>
-              <!-- Header Kartu: Kategori & Label GRATIS Mencolok -->
               <div class="flex justify-between items-center gap-2">
                 <span class="text-xs font-extrabold px-3 py-1 rounded-full transition ${theme.badge}">
                   ${item.kategori}
@@ -465,12 +470,10 @@
                 </span>
               </div>
 
-              <!-- Judul Layanan -->
               <h3 class="font-extrabold text-lg text-slate-800 group-hover:text-white mt-4 transition">
                 ${item.nama}
               </h3>
 
-              <!-- Informasi Estimasi & Biaya -->
               <div class="mt-3 p-3 rounded-xl bg-slate-50 group-hover:bg-white/15 border border-slate-200/80 group-hover:border-white/30 text-xs transition space-y-1">
                 <p class="text-slate-700 group-hover:text-white leading-relaxed">
                   ⏱️ <strong>Estimasi layanan:</strong> 1 Hari kerja <span class="italic opacity-90">(Jika syarat terpenuhi dan sistem berjalan normal)</span>
@@ -480,14 +483,12 @@
                 </p>
               </div>
 
-              <!-- Box Detail Syarat (Hide / Unhide) -->
               <div id="detailSyarat_${index}" class="hidden mt-3 p-3.5 rounded-xl bg-amber-50 text-amber-950 border border-amber-300 text-xs shadow-inner">
                 <p class="font-extrabold mb-1.5 text-amber-900">📋 Persyaratan Layanan:</p>
                 <ul class="list-disc list-inside space-y-1">${syaratItems}</ul>
               </div>
             </div>
 
-            <!-- Dua Tombol Aksi pada Kartu -->
             <div class="mt-5 pt-3 border-t border-slate-100 group-hover:border-white/20 flex flex-col sm:flex-row gap-2.5">
               <button 
                 type="button"
@@ -510,7 +511,6 @@
       });
     }
 
-    // Fungsi Hide / Unhide Syarat pada Kartu Layanan
     function toggleDetailSyarat(index) {
       const box = document.getElementById(`detailSyarat_${index}`);
       const btn = document.getElementById(`btnSyarat_${index}`);
@@ -522,7 +522,6 @@
       }
     }
 
-    // Fungsi Buka Formulir Layanan Saat Klik "Isi Formulir Layanan"
     function pilihLayanan(index) {
       const item = daftarLayanan[index];
       document.getElementById('formContainer').classList.remove('hidden');
@@ -563,7 +562,6 @@
       });
     }
 
-    // Submit Permohonan Layanan dengan Pop-up Modern SweetAlert2
     async function kirimPermohonan(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
@@ -641,7 +639,6 @@
       }
     }
 
-    // Cek Status Layanan dengan Pop-up Modern
     async function cekStatus() {
       const tiket = document.getElementById('inputTiket').value.trim();
       if (!tiket) {
@@ -673,6 +670,8 @@
               <p><strong>Kode Layanan:</strong> <span class="text-emerald-700 font-bold">${d.kode}</span></p>
               <p><strong>Nama Pemohon:</strong> ${d.nama}</p>
               <p><strong>Jenis Layanan:</strong> ${d.layanan}</p>
+              <p><strong>Tanggal Masuk:</strong> ${d.tanggalMasuk || d.tanggal}</p>
+              ${d.status === 'Selesai' ? `<p><strong>Tanggal Selesai:</strong> ${d.tanggalSelesai} (${d.durasi})</p>` : ''}
               <p><strong>Status Saat Ini:</strong> <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badgeColor}">${d.status}</span></p>
               ${d.linkHasil && d.linkHasil !== '-' && d.linkHasil.startsWith('http') ? `
                 <div class="pt-2">
@@ -692,7 +691,6 @@
       }
     }
 
-    // Login Multi-User dengan Notifikasi Modern
     async function prosesLogin(e) {
       e.preventDefault();
       const role = document.getElementById('loginRole').value;
@@ -765,7 +763,6 @@
       Swal.fire({ icon: 'info', title: 'Berhasil Keluar', timer: 1200, showConfirmButton: false });
     }
 
-    // Admin: Simpan Pengaturan
     async function simpanPengaturan(e) {
       e.preventDefault();
       Swal.fire({ title: 'Menyimpan Pengaturan...', didOpen: () => Swal.showLoading() });
@@ -788,7 +785,6 @@
       Swal.fire({ icon: 'success', title: 'Tersimpan!', text: result.message, confirmButtonColor: '#047857' });
     }
 
-    // Admin: Render & Kelola Layanan
     function renderAdminLayanan() {
       const container = document.getElementById('adminListLayanan');
       container.innerHTML = '';
@@ -881,7 +877,6 @@
       }
     }
 
-    // Petugas: Render & Simpan Status + Link Dokumen
     function renderTabelPetugas(list) {
       const tbody = document.getElementById('tabelPetugas');
       tbody.innerHTML = '';
@@ -893,7 +888,7 @@
         const rincian = Object.entries(item.detail || {}).map(([k, v]) => `<b>${k}:</b> ${v}`).join('<br>');
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50">
-            <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">${item.tanggal}</span></td>
+            <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">Masuk: ${item.tanggalMasuk || item.tanggal}</span></td>
             <td class="p-3"><b>${item.nama}</b><br><span class="text-emerald-700">${item.email}</span><br>WA: ${item.whatsapp}</td>
             <td class="p-3"><span class="font-bold text-emerald-800">${item.layanan}</span><br><div class="mt-1 text-slate-600">${rincian}</div></td>
             <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg font-bold inline-block">📄 Buka Berkas</a>` : '-'}</td>
@@ -920,7 +915,6 @@
       const statusBaru = document.getElementById(`status_${index}`).value;
       const linkHasil = document.getElementById(`hasil_${index}`).value.trim() || '-';
 
-      // Peringatan modern jika petugas memilih "Selesai" tetapi lupa menempelkan link dokumen
       if (statusBaru === 'Selesai' && linkHasil === '-') {
         const tanya = await Swal.fire({
           icon: 'question',
@@ -936,7 +930,7 @@
 
       Swal.fire({
         title: 'Menyimpan & Mengirim Email...',
-        text: 'Mohon tunggu, sistem sedang memperbarui status dan mengirim notifikasi ke email pemohon.',
+        text: 'Mohon tunggu, sistem sedang mencatat waktu selesai, durasi pengerjaan, dan mengirim email.',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
       });
@@ -971,7 +965,7 @@
       }
     }
 
-    // Pimpinan: Render Monitoring & Statistik
+    // Pimpinan: Render Monitoring Lengkap dengan Tanggal Masuk, Tanggal Selesai, dan Durasi Jam Menit
     function renderDashboardPimpinan(list) {
       const total = list.length;
       const menunggu = list.filter(x => x.status === 'Menunggu Verifikasi').length;
@@ -986,19 +980,37 @@
       `;
 
       const tbody = document.getElementById('tabelPimpinan');
-      tbody.innerHTML = list.map(item => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-3 font-bold">${item.kode}</td>
-          <td class="p-3">${item.tanggal}</td>
-          <td class="p-3"><b>${item.nama}</b><br><span class="text-slate-500">${item.email}</span></td>
-          <td class="p-3"><span class="text-xs bg-slate-100 px-2 py-0.5 rounded">${item.kategori}</span><br><b>${item.layanan}</b></td>
-          <td class="p-3"><span class="font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800">${item.status}</span></td>
-          <td class="p-3">
-            ${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline mr-2">Berkas Masuk</a>` : ''}
-            ${item.linkHasil && item.linkHasil !== '-' ? `<a href="${item.linkHasil}" target="_blank" class="text-emerald-700 font-bold underline">Dokumen Hasil</a>` : ''}
-          </td>
-        </tr>
-      `).join('');
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Belum ada data permohonan layanan.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        let statusBadge = 'bg-amber-100 text-amber-800';
+        if (item.status === 'Sedang Diproses') statusBadge = 'bg-blue-100 text-blue-800';
+        if (item.status === 'Selesai') statusBadge = 'bg-emerald-100 text-emerald-800';
+        if (item.status === 'Ditolak') statusBadge = 'bg-rose-100 text-rose-800';
+
+        const badgeDurasi = (item.status === 'Selesai' && item.durasi && item.durasi !== '-')
+          ? `<span class="inline-block bg-indigo-50 text-indigo-800 border border-indigo-200 font-extrabold px-2.5 py-1 rounded-lg">⏱️ ${item.durasi}</span>`
+          : `<span class="text-slate-400 italic">Belum selesai</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 font-bold text-slate-900">${item.kode}</td>
+            <td class="p-3"><b>${item.nama}</b><br><span class="text-slate-500">${item.email}</span></td>
+            <td class="p-3"><span class="text-[11px] bg-slate-100 px-2 py-0.5 rounded font-semibold">${item.kategori}</span><br><b>${item.layanan}</b></td>
+            <td class="p-3 font-semibold text-slate-700">${item.tanggalMasuk || item.tanggal}</td>
+            <td class="p-3 font-semibold ${item.tanggalSelesai !== '-' ? 'text-emerald-700' : 'text-slate-400'}">${item.tanggalSelesai || '-'}</td>
+            <td class="p-3">${badgeDurasi}</td>
+            <td class="p-3"><span class="font-bold px-2.5 py-1 rounded-full ${statusBadge}">${item.status}</span></td>
+            <td class="p-3 space-y-1">
+              ${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="block text-blue-600 underline font-semibold">📄 Berkas Masuk</a>` : ''}
+              ${item.linkHasil && item.linkHasil !== '-' && item.linkHasil.startsWith('http') ? `<a href="${item.linkHasil}" target="_blank" class="block text-emerald-700 font-bold underline">📥 Dokumen Hasil</a>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
   </script>
 </body>
