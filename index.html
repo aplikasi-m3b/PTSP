@@ -5,18 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PTSP Online MTsN 3 Banyuwangi</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library Pop-Up Modern SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    /* Animasi Running Text (Marquee) */
+    @keyframes marqueeText {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .running-text-wrapper {
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+    .running-text-content {
+      display: inline-block;
+      padding-left: 10%;
+      animation: marqueeText 28s linear infinite;
+    }
+    .running-text-wrapper:hover .running-text-content {
+      animation-play-state: paused;
+    }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans pb-28">
 
   <!-- Top Bar Navigasi Login -->
-  <div class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4">
+  <div class="bg-emerald-950 text-emerald-100 text-xs py-2.5 px-4 shadow-sm">
     <div class="max-w-6xl mx-auto flex justify-between items-center">
       <span>📧 Email Resmi: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
       <div>
-        <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded font-semibold transition">
+        <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold transition shadow">
           🔐 Login Sistem
         </button>
-        <button id="btnLogout" onclick="logout()" class="hidden bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-semibold transition">
+        <button id="btnLogout" onclick="logout()" class="hidden bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition shadow">
           Keluar (Logout)
         </button>
       </div>
@@ -24,23 +46,31 @@
   </div>
 
   <!-- Header Utama -->
-  <header class="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white py-8 px-4 shadow-lg text-center">
-    <div class="max-w-3xl mx-auto flex flex-col items-center">
+  <header class="bg-gradient-to-b from-emerald-800 to-emerald-700 text-white pt-8 pb-6 px-4 shadow-lg text-center">
+    <div class="max-w-4xl mx-auto flex flex-col items-center">
       <img 
         src="https://drive.google.com/thumbnail?id=1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h&sz=w400" 
         onerror="this.src='https://lh3.googleusercontent.com/d/1d8oc7fFLvWhiCsny_ssG7-Mxet0_C20h'"
         alt="Logo MTsN 3 Banyuwangi" 
-        class="w-24 h-24 object-contain bg-white p-2 rounded-full shadow-md mb-3"
+        class="w-24 h-24 md:w-28 md:h-28 object-contain bg-white p-2 rounded-full shadow-lg mb-3 border-2 border-emerald-300"
       >
       <h1 class="text-2xl md:text-3xl font-extrabold tracking-wide">PTSP Online MTsN 3 Banyuwangi</h1>
       <p class="text-emerald-100 text-base md:text-lg mt-1">Pelayanan Terpadu Satu Pintu Online</p>
 
+      <!-- Tombol Tracking Layanan -->
       <button 
         onclick="toggleTracking()" 
-        class="mt-5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-2.5 rounded-full shadow-md transition flex items-center gap-2 text-sm"
+        class="mt-5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold px-7 py-2.5 rounded-full shadow-lg hover:scale-105 transition flex items-center gap-2 text-sm md:text-base"
       >
         🔍 Tracking Layanan
       </button>
+
+      <!-- Running Text Pemberitahuan Jam Layanan (Backdrop Hijau & Teks Putih Tebal) -->
+      <div class="w-full mt-5 bg-green-600 border-2 border-green-400 rounded-xl py-2.5 px-3 shadow-inner running-text-wrapper">
+        <div class="running-text-content text-white font-bold text-sm md:text-base tracking-wide">
+          📢 Jam Layanan PTSP: 07.30 sd 15.30 WIB (Hari Kerja: Senin-Jumat) &bull; Permohonan Layanan diluar Jam Layanan, akan diproses keesokan harinya, dan Permohonan Layanan diluar hari kerja, akan diproses pada hari kerja.
+        </div>
+      </div>
     </div>
   </header>
 
@@ -49,36 +79,44 @@
     <!-- ================= HALAMAN PUBLIK ================= -->
     <div id="publicView">
       <!-- Panel Tracking Layanan -->
-      <div id="panelTracking" class="hidden mb-8 bg-white p-6 rounded-2xl shadow-md border-2 border-amber-400">
+      <div id="panelTracking" class="hidden mb-8 bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-400">
         <div class="flex justify-between items-center mb-2">
-          <h2 class="text-lg font-bold">Lacak Status Layanan</h2>
+          <h2 class="text-lg font-extrabold text-slate-800">🔎 Cek Progres Layanan Anda</h2>
           <button onclick="toggleTracking()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">Tutup ✕</button>
         </div>
         <p class="text-xs text-slate-500 mb-4">Masukkan Kode Layanan yang telah dikirimkan ke alamat Email Anda.</p>
         <div class="flex flex-col sm:flex-row gap-3">
-          <input id="inputTiket" type="text" placeholder="Contoh: PTSP-20261104-1234" class="flex-1 border rounded-xl px-4 py-2.5 text-sm">
-          <button onclick="cekStatus()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl text-sm font-semibold">
-            Cek Status
+          <input id="inputTiket" type="text" placeholder="Contoh: PTSP-20261104-1234" class="flex-1 border-2 border-slate-200 focus:border-emerald-600 outline-none rounded-xl px-4 py-2.5 text-sm font-semibold">
+          <button onclick="cekStatus()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow transition">
+            Lacak Sekarang
           </button>
         </div>
         <div id="hasilLacak" class="hidden mt-4 p-4 rounded-xl bg-slate-50 border"></div>
       </div>
 
       <!-- Katalog Menu Layanan -->
-      <div class="text-center mb-6">
-        <h2 class="text-xl font-bold">Daftar Menu Layanan</h2>
-        <p class="text-sm text-slate-500">Pilih layanan di bawah ini untuk membaca persyaratan dan mengisi formulir permohonan</p>
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-extrabold text-slate-800">Daftar Menu Layanan PTSP</h2>
+        <p class="text-sm text-slate-500 mt-1">Arahkan kursor pada layanan, klik <strong>Lihat Detail Syarat</strong> atau langsung klik <strong>Isi Formulir Layanan</strong></p>
       </div>
 
-      <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"></div>
+      <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"></div>
 
       <!-- Formulir Pengajuan Layanan -->
-      <div id="formContainer" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200">
-        <span id="badgeKategori" class="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-100 text-emerald-800"></span>
-        <h3 id="judulLayanan" class="text-xl font-bold text-emerald-800 mt-2 mb-4"></h3>
+      <div id="formContainer" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-xl border-2 border-emerald-500">
+        <div class="flex flex-wrap justify-between items-start gap-2 border-b pb-4 mb-5">
+          <div>
+            <span id="badgeKategori" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800"></span>
+            <h3 id="judulLayanan" class="text-xl md:text-2xl font-extrabold text-emerald-900 mt-2"></h3>
+          </div>
+          <div class="text-right">
+            <span class="inline-block bg-rose-600 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">BIAYA: GRATIS</span>
+            <p class="text-xs text-slate-500 mt-1">Estimasi: 1 Hari Kerja</p>
+          </div>
+        </div>
 
         <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6">
-          <p class="font-bold text-amber-900 text-sm mb-1">📋 Persyaratan Layanan:</p>
+          <p class="font-bold text-amber-900 text-sm mb-1">📋 Persyaratan Layanan yang Harus Disiapkan:</p>
           <ul id="listSyarat" class="list-disc list-inside text-sm text-amber-900 space-y-1"></ul>
         </div>
 
@@ -88,45 +126,47 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-1">Nama Lengkap Pemohon <span class="text-red-500">*</span></label>
-              <input type="text" id="nama" required placeholder="Nama lengkap" class="w-full border rounded-xl px-3.5 py-2 text-sm">
+              <label class="block text-sm font-bold mb-1">Nama Lengkap Pemohon <span class="text-red-500">*</span></label>
+              <input type="text" id="nama" required placeholder="Nama lengkap" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
             </div>
             <div>
-              <label class="block text-sm font-semibold mb-1">Alamat Email Aktif <span class="text-red-500">*</span></label>
-              <input type="email" id="email" required placeholder="nama@email.com" class="w-full border rounded-xl px-3.5 py-2 text-sm">
-              <span class="text-xs text-emerald-700 mt-1 block">Kode Layanan akan dikirim otomatis ke Email ini.</span>
+              <label class="block text-sm font-bold mb-1">Alamat Email Aktif <span class="text-red-500">*</span></label>
+              <input type="email" id="email" required placeholder="nama@email.com" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <span class="text-xs text-emerald-700 font-medium mt-1 block">Kode Layanan & Dokumen Selesai dikirim ke Email ini.</span>
             </div>
             <div>
-              <label class="block text-sm font-semibold mb-1">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
-              <input type="tel" id="whatsapp" required placeholder="08123456789" class="w-full border rounded-xl px-3.5 py-2 text-sm">
-              <span class="text-xs text-slate-500 mt-1 block">Digunakan petugas jika perlu konfirmasi berkas.</span>
+              <label class="block text-sm font-bold mb-1">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
+              <input type="tel" id="whatsapp" required placeholder="08123456789" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <span class="text-xs text-slate-500 mt-1 block">Nomor aktif untuk konfirmasi petugas.</span>
             </div>
           </div>
 
           <div id="dynamicFields" class="space-y-4"></div>
 
           <div>
-            <label class="block text-sm font-semibold mb-1">Unggah Berkas Persyaratan (PDF/JPG/PNG) <span class="text-red-500">*</span></label>
-            <input type="file" id="berkas" accept=".pdf,.jpg,.jpeg,.png" required class="w-full border rounded-xl px-3.5 py-2 text-sm bg-slate-50">
+            <label class="block text-sm font-bold mb-1">Unggah Berkas Persyaratan (PDF/JPG/PNG) <span class="text-red-500">*</span></label>
+            <input type="file" id="berkas" accept=".pdf,.jpg,.jpeg,.png" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-slate-50">
           </div>
 
-          <button type="submit" id="btnSubmit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 py-3 rounded-xl shadow transition">
-            Kirim Permohonan Layanan
-          </button>
+          <div class="flex flex-wrap gap-3 pt-3">
+            <button type="submit" id="btnSubmit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold px-8 py-3 rounded-xl shadow-lg transition">
+              🚀 Kirim Permohonan Layanan
+            </button>
+            <button type="button" onclick="document.getElementById('formContainer').classList.add('hidden')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-3 rounded-xl transition">
+              Tutup Formulir
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- ================= DASHBOARD ADMIN ================= -->
     <div id="adminView" class="hidden space-y-8">
-      <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex justify-between items-center">
-        <div>
-          <h2 class="text-lg font-bold text-emerald-900">Panel Administrator</h2>
-          <p class="text-xs text-emerald-700">Kelola konfigurasi Fonnte, Nomor WA Petugas, Email Pengirim, dan Daftar Layanan</p>
-        </div>
+      <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+        <h2 class="text-lg font-bold text-emerald-900">Panel Administrator</h2>
+        <p class="text-xs text-emerald-700">Kelola konfigurasi Fonnte, Nomor WA Petugas, Email Pengirim, dan Daftar Layanan</p>
       </div>
 
-      <!-- Pengaturan Sistem -->
       <div class="bg-white p-6 rounded-2xl shadow border">
         <h3 class="font-bold text-base mb-4 border-b pb-2">⚙️ Pengaturan Sistem & Notifikasi</h3>
         <form onsubmit="simpanPengaturan(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -143,14 +183,13 @@
             <input type="email" id="setEmailAdmin" required class="w-full border rounded-lg px-3 py-2 text-sm">
           </div>
           <div class="md:col-span-3">
-            <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg">
+            <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg shadow">
               Simpan Pengaturan
             </button>
           </div>
         </form>
       </div>
 
-      <!-- Manajemen Layanan (Tambah / Edit / Hapus) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white p-6 rounded-2xl shadow border">
           <h3 id="formLayananTitle" class="font-bold text-base mb-4 border-b pb-2">➕ Tambah / Edit Layanan</h3>
@@ -177,7 +216,7 @@
               <textarea id="editFields" rows="3" required placeholder="NISN&#10;Tahun Lulus&#10;Keperluan" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
             </div>
             <div class="flex gap-2 pt-2">
-              <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg">
+              <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-5 py-2 rounded-lg shadow">
                 Simpan Layanan
               </button>
               <button type="button" onclick="resetFormLayanan()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold px-4 py-2 rounded-lg">
@@ -198,7 +237,7 @@
     <div id="petugasView" class="hidden space-y-6">
       <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
-        <p class="text-xs text-blue-700">Verifikasi berkas pengajuan dan perbarui status layanan (Email otomatis terkirim ke pemohon saat disimpan)</p>
+        <p class="text-xs text-blue-700">Ubah status menjadi <strong>Selesai</strong>, tempelkan <strong>Link Dokumen Hasil</strong>, lalu klik <strong>Simpan</strong> untuk mengirim notifikasi dan link dokumen otomatis ke Email pemohon.</p>
       </div>
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
@@ -207,8 +246,8 @@
               <th class="p-3">Kode & Tanggal</th>
               <th class="p-3">Pemohon & Kontak</th>
               <th class="p-3">Layanan & Rincian</th>
-              <th class="p-3">Berkas</th>
-              <th class="p-3">Status & Link Hasil</th>
+              <th class="p-3">Berkas Masuk</th>
+              <th class="p-3">Status & Link Dokumen Hasil</th>
               <th class="p-3">Aksi</th>
             </tr>
           </thead>
@@ -221,10 +260,9 @@
     <div id="pimpinanView" class="hidden space-y-6">
       <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-amber-900">Dashboard Monitoring Pimpinan</h2>
-        <p class="text-xs text-amber-800">Rekapitulasi dan pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi</p>
+        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi secara real-time</p>
       </div>
 
-      <!-- Kartu Statistik -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statCardsPimpinan"></div>
 
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
@@ -247,16 +285,16 @@
   </main>
 
   <!-- Modal Login (Dropdown User) -->
-  <div id="modalLogin" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
+  <div id="modalLogin" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-slate-100">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="font-bold text-lg text-emerald-800">Login Sistem PTSP</h3>
+        <h3 class="font-extrabold text-lg text-emerald-800">🔐 Login Sistem PTSP</h3>
         <button onclick="toggleModalLogin()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
       </div>
       <form onsubmit="prosesLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold mb-1">Pilih User</label>
-          <select id="loginRole" class="w-full border rounded-xl px-3 py-2.5 text-sm font-medium bg-slate-50">
+          <select id="loginRole" class="w-full border rounded-xl px-3 py-2.5 text-sm font-semibold bg-slate-50">
             <option value="admin">Admin</option>
             <option value="petugas">Petugas</option>
             <option value="pimpinan">Pimpinan</option>
@@ -266,8 +304,8 @@
           <label class="block text-xs font-bold mb-1">Password</label>
           <input type="password" id="loginPassword" required placeholder="Masukkan password..." class="w-full border rounded-xl px-3 py-2.5 text-sm">
         </div>
-        <button type="submit" id="btnLoginSubmit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl transition">
-          Masuk
+        <button type="submit" id="btnLoginSubmit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-xl shadow transition">
+          Masuk ke Dashboard
         </button>
       </form>
     </div>
@@ -291,10 +329,51 @@
 
   <script>
     // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwK7tWBgjg5f_43AcMSmeJ_P3gMoSnYMxr1hXxhUlG-3F-wpiJR1IdHrwmelZqQdiOb/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyT08GIfKSv0A3HFw3g_iTHwTmQhSnH0XnghTpkG1PJXEmOHBhjKUXxmdB6x6_8cj1P/exec';
 
     let currentRole = null;
     let currentPassword = null;
+
+    // Palet Warna-Warni Backdrop Saat Kursor Diarahkan (Hover) ke Tiap Kartu Layanan
+    const cardColorThemes = [
+      {
+        border: 'border-emerald-200 hover:border-emerald-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-700',
+        badge: 'bg-emerald-100 text-emerald-800 group-hover:bg-white group-hover:text-emerald-800',
+        btnForm: 'bg-emerald-600 hover:bg-emerald-700 group-hover:bg-amber-400 group-hover:text-slate-900'
+      },
+      {
+        border: 'border-blue-200 hover:border-blue-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-blue-600 hover:to-indigo-700',
+        badge: 'bg-blue-100 text-blue-800 group-hover:bg-white group-hover:text-blue-800',
+        btnForm: 'bg-blue-600 hover:bg-blue-700 group-hover:bg-amber-400 group-hover:text-slate-900'
+      },
+      {
+        border: 'border-purple-200 hover:border-purple-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-purple-600 hover:to-fuchsia-700',
+        badge: 'bg-purple-100 text-purple-800 group-hover:bg-white group-hover:text-purple-800',
+        btnForm: 'bg-purple-600 hover:bg-purple-700 group-hover:bg-amber-400 group-hover:text-slate-900'
+      },
+      {
+        border: 'border-rose-200 hover:border-rose-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-rose-600 hover:to-pink-700',
+        badge: 'bg-rose-100 text-rose-800 group-hover:bg-white group-hover:text-rose-800',
+        btnForm: 'bg-rose-600 hover:bg-rose-700 group-hover:bg-amber-400 group-hover:text-slate-900'
+      },
+      {
+        border: 'border-amber-200 hover:border-amber-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-orange-500 hover:to-amber-600',
+        badge: 'bg-amber-100 text-amber-900 group-hover:bg-white group-hover:text-amber-900',
+        btnForm: 'bg-amber-600 hover:bg-amber-700 group-hover:bg-slate-900 group-hover:text-white'
+      },
+      {
+        border: 'border-cyan-200 hover:border-cyan-500',
+        hoverBg: 'hover:bg-gradient-to-br hover:from-cyan-600 hover:to-sky-700',
+        badge: 'bg-cyan-100 text-cyan-800 group-hover:bg-white group-hover:text-cyan-800',
+        btnForm: 'bg-cyan-600 hover:bg-cyan-700 group-hover:bg-amber-400 group-hover:text-slate-900'
+      }
+    ];
+
     let daftarLayanan = [
       {
         id: 'LAY-001',
@@ -305,21 +384,41 @@
       },
       {
         id: 'LAY-002',
+        kategori: 'Layanan Murid',
+        nama: 'Permohonan Legalisir Ijazah / Rapor',
+        syarat: ['Scan dokumen asli Ijazah/SKHUN/Rapor yang jelas', 'Mencantumkan tahun lulus'],
+        fields: ['Tahun Lulus / Kelas', 'Dokumen yang Dilegalisir', 'Keperluan Legalisir']
+      },
+      {
+        id: 'LAY-003',
         kategori: 'Layanan Wali Murid',
         nama: 'Permohonan Mutasi / Pindah Siswa',
         syarat: ['Surat permohonan pindah dari orang tua/wali', 'Scan Rapor semester terakhir'],
         fields: ['Nama Lengkap Siswa', 'Kelas', 'Nama Sekolah Tujuan / Asal', 'Alasan Mutasi']
       },
       {
-        id: 'LAY-003',
+        id: 'LAY-004',
+        kategori: 'Layanan Wali Murid',
+        nama: 'Pengajuan Rekomendasi PIP / Keringanan',
+        syarat: ['Scan Kartu Keluarga (KK)', 'Scan KIP / PKH / SKTM dari Desa'],
+        fields: ['Nama Lengkap Siswa', 'Kelas', 'Jenis Pengajuan']
+      },
+      {
+        id: 'LAY-005',
         kategori: 'Masyarakat / Organisasi',
         nama: 'Izin Penelitian / Observasi / Magang',
         syarat: ['Surat Pengantar Resmi dari Kampus / Instansi', 'Proposal Singkat Kegiatan'],
         fields: ['Nama Kampus / Instansi', 'Judul Penelitian / Kegiatan', 'Rencana Tanggal Pelaksanaan']
+      },
+      {
+        id: 'LAY-006',
+        kategori: 'Masyarakat / Organisasi',
+        nama: 'Pengajuan Surat Masuk / Kerjasama Instansi',
+        syarat: ['Scan Surat Resmi dari Organisasi / Instansi Pengirim'],
+        fields: ['Nama Instansi Pengirim', 'Nomor Surat Masuk', 'Perihal Surat']
       }
     ];
 
-    // Muat data awal dari GAS saat halaman dibuka
     window.addEventListener('DOMContentLoaded', async () => {
       renderKatalogPublik();
       try {
@@ -334,7 +433,7 @@
           if (data.emailAdmin) document.getElementById('labelEmailHeader').innerText = data.emailAdmin;
         }
       } catch (e) {
-        console.log('Menggunakan katalog default sebelum GAS terhubung.');
+        console.log('Menampilkan katalog layanan default.');
       }
     });
 
@@ -344,22 +443,86 @@
         `https://wa.me/${bersih}?text=${encodeURIComponent('Assalamualaikum, saya ingin meminta bantuan terkait PTSP Online MTsN 3 Banyuwangi.')}`;
     }
 
+    // Render Kartu Layanan dengan Backdrop Warna-Warni saat Hover, Estimasi, Biaya GRATIS, Toggle Syarat & Tombol Form
     function renderKatalogPublik() {
       const menuGrid = document.getElementById('menuGrid');
       menuGrid.innerHTML = '';
+
       daftarLayanan.forEach((item, index) => {
+        const theme = cardColorThemes[index % cardColorThemes.length];
+        const syaratItems = item.syarat.map(s => `<li>${s}</li>`).join('');
+
         menuGrid.innerHTML += `
-          <div onclick="pilihLayanan(${index})" class="cursor-pointer bg-white p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200 hover:border-emerald-600 transition flex flex-col justify-between">
+          <div class="group bg-white ${theme.border} ${theme.hoverBg} p-6 rounded-2xl shadow-sm hover:shadow-2xl border-2 transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between">
             <div>
-              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">${item.kategori}</span>
-              <h3 class="font-bold text-base text-slate-800 mt-3">${item.nama}</h3>
+              <!-- Header Kartu: Kategori & Label GRATIS Mencolok -->
+              <div class="flex justify-between items-center gap-2">
+                <span class="text-xs font-extrabold px-3 py-1 rounded-full transition ${theme.badge}">
+                  ${item.kategori}
+                </span>
+                <span class="bg-rose-600 group-hover:bg-yellow-300 text-white group-hover:text-rose-950 font-black text-xs px-3 py-1 rounded-full shadow-md uppercase tracking-wider animate-pulse">
+                  Biaya: GRATIS
+                </span>
+              </div>
+
+              <!-- Judul Layanan -->
+              <h3 class="font-extrabold text-lg text-slate-800 group-hover:text-white mt-4 transition">
+                ${item.nama}
+              </h3>
+
+              <!-- Informasi Estimasi & Biaya -->
+              <div class="mt-3 p-3 rounded-xl bg-slate-50 group-hover:bg-white/15 border border-slate-200/80 group-hover:border-white/30 text-xs transition space-y-1">
+                <p class="text-slate-700 group-hover:text-white leading-relaxed">
+                  ⏱️ <strong>Estimasi layanan:</strong> 1 Hari kerja <span class="italic opacity-90">(Jika syarat terpenuhi dan sistem berjalan normal)</span>
+                </p>
+                <p class="text-slate-800 group-hover:text-yellow-300 font-extrabold text-sm pt-0.5">
+                  🏷️ Biaya: <span class="underline decoration-2">GRATIS</span> (Rp 0,-)
+                </p>
+              </div>
+
+              <!-- Box Detail Syarat (Hide / Unhide) -->
+              <div id="detailSyarat_${index}" class="hidden mt-3 p-3.5 rounded-xl bg-amber-50 text-amber-950 border border-amber-300 text-xs shadow-inner">
+                <p class="font-extrabold mb-1.5 text-amber-900">📋 Persyaratan Layanan:</p>
+                <ul class="list-disc list-inside space-y-1">${syaratItems}</ul>
+              </div>
             </div>
-            <p class="text-xs text-emerald-700 font-semibold mt-4">Pilih Layanan &rarr;</p>
+
+            <!-- Dua Tombol Aksi pada Kartu -->
+            <div class="mt-5 pt-3 border-t border-slate-100 group-hover:border-white/20 flex flex-col sm:flex-row gap-2.5">
+              <button 
+                type="button"
+                onclick="toggleDetailSyarat(${index})" 
+                id="btnSyarat_${index}"
+                class="flex-1 bg-slate-100 hover:bg-slate-200 group-hover:bg-white/20 group-hover:hover:bg-white/30 text-slate-700 group-hover:text-white font-bold text-xs py-2.5 px-3 rounded-xl transition text-center"
+              >
+                📋 Lihat Detail Syarat
+              </button>
+              <button 
+                type="button"
+                onclick="pilihLayanan(${index})" 
+                class="flex-1 ${theme.btnForm} text-white font-extrabold text-xs py-2.5 px-3 rounded-xl shadow-md transition text-center"
+              >
+                ✍️ Isi Formulir Layanan
+              </button>
+            </div>
           </div>
         `;
       });
     }
 
+    // Fungsi Hide / Unhide Syarat pada Kartu Layanan
+    function toggleDetailSyarat(index) {
+      const box = document.getElementById(`detailSyarat_${index}`);
+      const btn = document.getElementById(`btnSyarat_${index}`);
+      box.classList.toggle('hidden');
+      if (box.classList.contains('hidden')) {
+        btn.innerHTML = '📋 Lihat Detail Syarat';
+      } else {
+        btn.innerHTML = '🔼 Sembunyikan Syarat';
+      }
+    }
+
+    // Fungsi Buka Formulir Layanan Saat Klik "Isi Formulir Layanan"
     function pilihLayanan(index) {
       const item = daftarLayanan[index];
       document.getElementById('formContainer').classList.remove('hidden');
@@ -371,16 +534,20 @@
       document.getElementById('listSyarat').innerHTML = item.syarat.map(s => `<li>${s}</li>`).join('');
       document.getElementById('dynamicFields').innerHTML = item.fields.map(label => `
         <div>
-          <label class="block text-sm font-semibold mb-1">${label} <span class="text-red-500">*</span></label>
-          <input type="text" data-label="${label}" required class="dyn-input w-full border rounded-xl px-3.5 py-2 text-sm">
+          <label class="block text-sm font-bold mb-1">${label} <span class="text-red-500">*</span></label>
+          <input type="text" data-label="${label}" required placeholder="Masukkan ${label}" class="dyn-input w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
         </div>
       `).join('');
 
-      document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('formContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function toggleTracking() {
-      document.getElementById('panelTracking').classList.toggle('hidden');
+      const panel = document.getElementById('panelTracking');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        document.getElementById('inputTiket').focus();
+      }
     }
 
     function toggleModalLogin() {
@@ -396,12 +563,18 @@
       });
     }
 
-    // Submit Permohonan oleh Masyarakat/Murid/Wali
+    // Submit Permohonan Layanan dengan Pop-up Modern SweetAlert2
     async function kirimPermohonan(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
-      btn.innerText = 'Sedang Mengirim Permohonan...';
+
+      Swal.fire({
+        title: 'Mengirim Permohonan...',
+        html: 'Mohon tunggu sebentar, berkas sedang diunggah dan Kode Layanan sedang dikirim ke Email Anda.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
 
       try {
         const fileInput = document.getElementById('berkas').files[0];
@@ -433,58 +606,103 @@
         const result = await res.json();
 
         if (result.status === 'success') {
-          alert(`Permohonan Berhasil Dikirim!\n\nKode Layanan Anda: ${result.tiket}\nKode ini juga telah dikirim ke alamat Email Anda (${payload.email}).`);
+          Swal.fire({
+            icon: 'success',
+            title: 'Permohonan Berhasil Dikirim!',
+            html: `
+              <div class="text-sm text-slate-700 space-y-2 mt-2">
+                <p>Kode Layanan Anda adalah:</p>
+                <div class="bg-emerald-50 border-2 border-emerald-500 text-emerald-900 font-black text-lg py-2 px-4 rounded-xl">
+                  ${result.tiket}
+                </div>
+                <p class="text-xs text-slate-500">Kode layanan ini juga telah dikirim otomatis ke email <strong>${payload.email}</strong>.</p>
+              </div>
+            `,
+            confirmButtonText: 'Salin Kode & Tutup',
+            confirmButtonColor: '#047857'
+          }).then(() => {
+            navigator.clipboard?.writeText(result.tiket);
+          });
+
           document.getElementById('ptspForm').reset();
           document.getElementById('formContainer').classList.add('hidden');
         } else {
-          alert('Gagal mengirim: ' + result.message);
+          Swal.fire({ icon: 'error', title: 'Gagal Mengirim', text: result.message, confirmButtonColor: '#dc2626' });
         }
       } catch (err) {
-        alert('Gagal terhubung ke server GAS. Pastikan GAS_URL sudah benar.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Koneksi Bermasalah',
+          text: 'Pastikan URL Web App Google Apps Script (GAS_URL) sudah dipasang dengan benar.',
+          confirmButtonColor: '#dc2626'
+        });
       } finally {
         btn.disabled = false;
-        btn.innerText = 'Kirim Permohonan Layanan';
       }
     }
 
-    // Cek Status Layanan
+    // Cek Status Layanan dengan Pop-up Modern
     async function cekStatus() {
       const tiket = document.getElementById('inputTiket').value.trim();
-      if (!tiket) return alert('Masukkan Kode Layanan terlebih dahulu!');
-      const box = document.getElementById('hasilLacak');
-      box.classList.remove('hidden');
-      box.innerHTML = 'Memeriksa data...';
+      if (!tiket) {
+        Swal.fire({ icon: 'warning', title: 'Kode Kosong', text: 'Silakan masukkan Kode Layanan terlebih dahulu.', confirmButtonColor: '#047857' });
+        return;
+      }
 
+      Swal.fire({
+        title: 'Mencari Data Layanan...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const box = document.getElementById('hasilLacak');
       try {
         const res = await fetch(`${GAS_URL}?action=track&tiket=${encodeURIComponent(tiket)}`);
         const result = await res.json();
+        Swal.close();
+
         if (result.status === 'success') {
           const d = result.data;
+          let badgeColor = 'bg-amber-100 text-amber-800';
+          if (d.status === 'Selesai') badgeColor = 'bg-emerald-100 text-emerald-800';
+          if (d.status === 'Ditolak') badgeColor = 'bg-rose-100 text-rose-800';
+
+          box.classList.remove('hidden');
           box.innerHTML = `
-            <div class="space-y-1 text-sm">
-              <p><strong>Kode Layanan:</strong> ${d.kode}</p>
+            <div class="space-y-2 text-sm">
+              <p><strong>Kode Layanan:</strong> <span class="text-emerald-700 font-bold">${d.kode}</span></p>
               <p><strong>Nama Pemohon:</strong> ${d.nama}</p>
               <p><strong>Jenis Layanan:</strong> ${d.layanan}</p>
-              <p><strong>Status Saat Ini:</strong> <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">${d.status}</span></p>
-              ${d.linkHasil && d.linkHasil !== '-' && d.linkHasil.startsWith('http') ? `<p class="pt-2"><a href="${d.linkHasil}" target="_blank" class="bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold">📥 Unduh Dokumen Hasil</a></p>` : ''}
+              <p><strong>Status Saat Ini:</strong> <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badgeColor}">${d.status}</span></p>
+              ${d.linkHasil && d.linkHasil !== '-' && d.linkHasil.startsWith('http') ? `
+                <div class="pt-2">
+                  <a href="${d.linkHasil}" target="_blank" class="inline-block bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">
+                    📥 Unduh Dokumen Hasil Layanan
+                  </a>
+                </div>
+              ` : ''}
             </div>
           `;
         } else {
-          box.innerHTML = `<p class="text-red-600 text-sm font-semibold">${result.message}</p>`;
+          box.classList.add('hidden');
+          Swal.fire({ icon: 'info', title: 'Data Tidak Ditemukan', text: result.message, confirmButtonColor: '#047857' });
         }
       } catch (e) {
-        box.innerHTML = '<p class="text-red-600 text-sm">Gagal memeriksa status.</p>';
+        Swal.fire({ icon: 'error', title: 'Gagal Memeriksa', text: 'Tidak dapat terhubung ke server.', confirmButtonColor: '#dc2626' });
       }
     }
 
-    // Proses Login Multi-User
+    // Login Multi-User dengan Notifikasi Modern
     async function prosesLogin(e) {
       e.preventDefault();
       const role = document.getElementById('loginRole').value;
       const password = document.getElementById('loginPassword').value;
-      const btn = document.getElementById('btnLoginSubmit');
-      btn.disabled = true;
-      btn.innerText = 'Memverifikasi...';
+
+      Swal.fire({
+        title: 'Memverifikasi Akun...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
 
       try {
         const res = await fetch(GAS_URL, {
@@ -519,14 +737,18 @@
             document.getElementById('pimpinanView').classList.remove('hidden');
             renderDashboardPimpinan(result.permohonan || []);
           }
+
+          Swal.fire({
+            icon: 'success',
+            title: `Selamat Datang, ${role.toUpperCase()}!`,
+            timer: 1600,
+            showConfirmButton: false
+          });
         } else {
-          alert(result.message);
+          Swal.fire({ icon: 'error', title: 'Login Gagal', text: result.message, confirmButtonColor: '#dc2626' });
         }
       } catch (err) {
-        alert('Gagal terhubung ke server GAS.');
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'Masuk';
+        Swal.fire({ icon: 'error', title: 'Gagal Terhubung', text: 'Periksa koneksi atau URL Web App GAS.', confirmButtonColor: '#dc2626' });
       }
     }
 
@@ -540,11 +762,14 @@
       document.getElementById('btnOpenLogin').classList.remove('hidden');
       document.getElementById('btnLogout').classList.add('hidden');
       renderKatalogPublik();
+      Swal.fire({ icon: 'info', title: 'Berhasil Keluar', timer: 1200, showConfirmButton: false });
     }
 
-    // Fungsi Admin: Simpan Pengaturan
+    // Admin: Simpan Pengaturan
     async function simpanPengaturan(e) {
       e.preventDefault();
+      Swal.fire({ title: 'Menyimpan Pengaturan...', didOpen: () => Swal.showLoading() });
+
       const payload = {
         action: 'saveSettings',
         password: currentPassword,
@@ -558,26 +783,26 @@
         body: JSON.stringify(payload)
       });
       const result = await res.json();
-      alert(result.message);
       updateLinkBantuan(payload.waAdmin);
       document.getElementById('labelEmailHeader').innerText = payload.emailAdmin;
+      Swal.fire({ icon: 'success', title: 'Tersimpan!', text: result.message, confirmButtonColor: '#047857' });
     }
 
-    // Fungsi Admin: Render & CRUD Layanan
+    // Admin: Render & Kelola Layanan
     function renderAdminLayanan() {
       const container = document.getElementById('adminListLayanan');
       container.innerHTML = '';
       daftarLayanan.forEach((item, idx) => {
         container.innerHTML += `
-          <div class="p-3 border rounded-xl bg-slate-50 flex justify-between items-start gap-2">
+          <div class="p-3.5 border rounded-xl bg-slate-50 flex justify-between items-start gap-2">
             <div>
               <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">${item.kategori}</span>
               <h4 class="font-bold text-sm mt-1">${item.nama}</h4>
               <p class="text-xs text-slate-500">Syarat: ${item.syarat.length} item | Input: ${item.fields.length} kolom</p>
             </div>
             <div class="flex gap-1.5">
-              <button onclick="isiEditLayanan(${idx})" class="bg-amber-500 text-white px-2.5 py-1 rounded text-xs font-semibold">Edit</button>
-              <button onclick="hapusLayanan('${item.id}')" class="bg-red-600 text-white px-2.5 py-1 rounded text-xs font-semibold">Hapus</button>
+              <button onclick="isiEditLayanan(${idx})" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-xs font-bold">Edit</button>
+              <button onclick="hapusLayanan('${item.id}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-lg text-xs font-bold">Hapus</button>
             </div>
           </div>
         `;
@@ -602,6 +827,8 @@
 
     async function simpanLayanan(e) {
       e.preventDefault();
+      Swal.fire({ title: 'Menyimpan Layanan...', didOpen: () => Swal.showLoading() });
+
       const syaratArr = document.getElementById('editSyarat').value.split('\n').map(s => s.trim()).filter(Boolean);
       const fieldsArr = document.getElementById('editFields').value.split('\n').map(f => f.trim()).filter(Boolean);
 
@@ -623,12 +850,24 @@
         daftarLayanan = result.layanan;
         renderAdminLayanan();
         resetFormLayanan();
-        alert('Data layanan berhasil disimpan!');
+        Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Data layanan berhasil diperbarui.', confirmButtonColor: '#047857' });
       }
     }
 
     async function hapusLayanan(idLayanan) {
-      if (!confirm('Yakin ingin menghapus layanan ini?')) return;
+      const konfirmasi = await Swal.fire({
+        icon: 'warning',
+        title: 'Hapus Layanan Ini?',
+        text: 'Layanan yang dihapus tidak akan tampil di halaman depan.',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal'
+      });
+      if (!konfirmasi.isConfirmed) return;
+
+      Swal.fire({ title: 'Menghapus...', didOpen: () => Swal.showLoading() });
       const res = await fetch(GAS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -638,10 +877,11 @@
       if (result.status === 'success') {
         daftarLayanan = result.layanan;
         renderAdminLayanan();
+        Swal.fire({ icon: 'success', title: 'Terhapus!', timer: 1200, showConfirmButton: false });
       }
     }
 
-    // Fungsi Petugas: Render & Update Status Permohonan
+    // Petugas: Render & Simpan Status + Link Dokumen
     function renderTabelPetugas(list) {
       const tbody = document.getElementById('tabelPetugas');
       tbody.innerHTML = '';
@@ -654,21 +894,21 @@
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">${item.tanggal}</span></td>
-            <td class="p-3"><b>${item.nama}</b><br>${item.email}<br>WA: ${item.whatsapp}</td>
-            <td class="p-3"><span class="font-semibold text-emerald-800">${item.layanan}</span><br><div class="mt-1 text-slate-600">${rincian}</div></td>
-            <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline font-semibold">Lihat Berkas</a>` : '-'}</td>
-            <td class="p-3 space-y-1.5">
-              <select id="status_${i}" class="border rounded px-2 py-1 w-full">
+            <td class="p-3"><b>${item.nama}</b><br><span class="text-emerald-700">${item.email}</span><br>WA: ${item.whatsapp}</td>
+            <td class="p-3"><span class="font-bold text-emerald-800">${item.layanan}</span><br><div class="mt-1 text-slate-600">${rincian}</div></td>
+            <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg font-bold inline-block">📄 Buka Berkas</a>` : '-'}</td>
+            <td class="p-3 space-y-2">
+              <select id="status_${i}" class="border rounded-lg px-2.5 py-1.5 w-full font-semibold">
                 <option value="Menunggu Verifikasi" ${item.status === 'Menunggu Verifikasi' ? 'selected' : ''}>Menunggu Verifikasi</option>
                 <option value="Sedang Diproses" ${item.status === 'Sedang Diproses' ? 'selected' : ''}>Sedang Diproses</option>
                 <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                 <option value="Ditolak" ${item.status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
               </select>
-              <input type="text" id="hasil_${i}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Link dokumen hasil / catatan" class="border rounded px-2 py-1 w-full">
+              <input type="text" id="hasil_${i}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Tempel Link Dokumen Hasil (Google Drive, dll)" class="border rounded-lg px-2.5 py-1.5 w-full">
             </td>
             <td class="p-3">
-              <button onclick="simpanStatusPetugas('${item.kode}', ${i})" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded font-bold">
-                Simpan
+              <button onclick="simpanStatusPetugas('${item.kode}', ${i})" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-bold shadow transition">
+                💾 Simpan
               </button>
             </td>
           </tr>
@@ -679,6 +919,28 @@
     async function simpanStatusPetugas(kode, index) {
       const statusBaru = document.getElementById(`status_${index}`).value;
       const linkHasil = document.getElementById(`hasil_${index}`).value.trim() || '-';
+
+      // Peringatan modern jika petugas memilih "Selesai" tetapi lupa menempelkan link dokumen
+      if (statusBaru === 'Selesai' && linkHasil === '-') {
+        const tanya = await Swal.fire({
+          icon: 'question',
+          title: 'Link Dokumen Belum Diisi',
+          text: 'Anda mengubah status menjadi "Selesai" namun belum melampirkan Link Dokumen. Apakah ingin melanjutkan tanpa link dokumen?',
+          showCancelButton: true,
+          confirmButtonText: 'Tetap Simpan',
+          cancelButtonText: 'Isi Link Dulu',
+          confirmButtonColor: '#047857'
+        });
+        if (!tanya.isConfirmed) return;
+      }
+
+      Swal.fire({
+        title: 'Menyimpan & Mengirim Email...',
+        text: 'Mohon tunggu, sistem sedang memperbarui status dan mengirim notifikasi ke email pemohon.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
       const res = await fetch(GAS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -691,13 +953,25 @@
         })
       });
       const result = await res.json();
+
       if (result.status === 'success') {
-        alert(`Status layanan ${kode} berhasil diperbarui menjadi "${statusBaru}" dan notifikasi Email telah dikirim ke pemohon.`);
+        const pesanEmail = (statusBaru === 'Selesai' && linkHasil !== '-')
+          ? `Notifikasi Layanan Selesai beserta Link Dokumen telah dikirim ke email <strong>${result.emailTujuan}</strong>.`
+          : `Status diperbarui menjadi <strong>${statusBaru}</strong> dan email pemberitahuan telah dikirim ke <strong>${result.emailTujuan}</strong>.`;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Status Berhasil Disimpan!',
+          html: pesanEmail,
+          confirmButtonColor: '#047857'
+        });
         renderTabelPetugas(result.permohonan);
+      } else {
+        Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: result.message, confirmButtonColor: '#dc2626' });
       }
     }
 
-    // Fungsi Pimpinan: Render Monitoring & Statistik
+    // Pimpinan: Render Monitoring & Statistik
     function renderDashboardPimpinan(list) {
       const total = list.length;
       const menunggu = list.filter(x => x.status === 'Menunggu Verifikasi').length;
@@ -719,7 +993,10 @@
           <td class="p-3"><b>${item.nama}</b><br><span class="text-slate-500">${item.email}</span></td>
           <td class="p-3"><span class="text-xs bg-slate-100 px-2 py-0.5 rounded">${item.kategori}</span><br><b>${item.layanan}</b></td>
           <td class="p-3"><span class="font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800">${item.status}</span></td>
-          <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline">Berkas Masuk</a>` : '-'}</td>
+          <td class="p-3">
+            ${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="text-blue-600 underline mr-2">Berkas Masuk</a>` : ''}
+            ${item.linkHasil && item.linkHasil !== '-' ? `<a href="${item.linkHasil}" target="_blank" class="text-emerald-700 font-bold underline">Dokumen Hasil</a>` : ''}
+          </td>
         </tr>
       `).join('');
     }
