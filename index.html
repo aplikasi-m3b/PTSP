@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* Animasi Running Text Langsung Berjalan Saat Aplikasi Dibuka (Mulai dari 0%) */
     @keyframes marqueeImmediate {
       0% { transform: translateX(0%); }
       100% { transform: translateX(-50%); }
@@ -35,7 +34,6 @@
   <div class="bg-emerald-950 text-emerald-100 text-xs py-2.5 px-4 shadow-sm">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <span>📧 Email Resmi: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
-      <span>✆ WA Resmi: <strong id="labelEmailHeader">082330263316</strong></span>
       <div>
         <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold transition shadow">
           🔐 Login Sistem
@@ -98,7 +96,7 @@
             Lacak Sekarang
           </button>
         </div>
-        <div id="hasilLacak" class="hidden mt-4 p-4 rounded-xl bg-slate-50 border"></div>
+        <div id="hasilLacak" class="hidden mt-4 p-5 rounded-xl bg-slate-50 border border-slate-200"></div>
       </div>
 
       <!-- Katalog Menu Layanan -->
@@ -246,13 +244,47 @@
         <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
         <p class="text-xs text-blue-700">Ubah status menjadi <strong>Selesai</strong>, tempelkan <strong>Link Dokumen Hasil</strong>, lalu klik <strong>Simpan</strong> untuk mencatat waktu selesai & durasi pengerjaan sekaligus mengirim email ke pemohon.</p>
       </div>
+
+      <!-- Bar Filter Petugas -->
+      <div class="bg-white p-4 rounded-2xl shadow border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Kategori & Layanan</label>
+          <select id="filterLayananPetugas" onchange="terapkanFilterPetugas()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+            <option value="">Semua Kategori & Layanan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Tanggal Masuk</label>
+          <input type="date" id="filterTanggalPetugas" onchange="terapkanFilterPetugas()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Bulan Masuk</label>
+          <input type="month" id="filterBulanPetugas" onchange="terapkanFilterPetugas()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Status</label>
+          <select id="filterStatusPetugas" onchange="terapkanFilterPetugas()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+            <option value="">Semua Status</option>
+            <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+            <option value="Sedang Diproses">Sedang Diproses</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Ditolak">Ditolak</option>
+          </select>
+        </div>
+        <div>
+          <button onclick="resetFilterPetugas()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-3 rounded-xl text-xs transition">
+            🔄 Reset Filter
+          </button>
+        </div>
+      </div>
+
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
             <tr class="bg-slate-100 text-slate-700 border-b">
               <th class="p-3">Kode & Waktu Masuk</th>
               <th class="p-3">Pemohon & Kontak</th>
-              <th class="p-3">Layanan & Rincian</th>
+              <th class="p-3">Kategori & Layanan</th>
               <th class="p-3">Berkas Masuk</th>
               <th class="p-3">Status & Link Dokumen Hasil</th>
               <th class="p-3">Aksi</th>
@@ -267,7 +299,40 @@
     <div id="pimpinanView" class="hidden space-y-6">
       <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-amber-900">Dashboard Monitoring Pimpinan</h2>
-        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi lengkap dengan waktu masuk, waktu selesai, dan durasi pengerjaan</p>
+        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi lengkap dengan filter, waktu masuk, waktu selesai, dan durasi pengerjaan</p>
+      </div>
+
+      <!-- Bar Filter Pimpinan -->
+      <div class="bg-white p-4 rounded-2xl shadow border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Kategori & Layanan</label>
+          <select id="filterLayananPimpinan" onchange="terapkanFilterPimpinan()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+            <option value="">Semua Kategori & Layanan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Tanggal Masuk</label>
+          <input type="date" id="filterTanggalPimpinan" onchange="terapkanFilterPimpinan()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Bulan Masuk</label>
+          <input type="month" id="filterBulanPimpinan" onchange="terapkanFilterPimpinan()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Filter Status</label>
+          <select id="filterStatusPimpinan" onchange="terapkanFilterPimpinan()" class="w-full border rounded-xl px-3 py-2 text-xs font-semibold bg-slate-50">
+            <option value="">Semua Status</option>
+            <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+            <option value="Sedang Diproses">Sedang Diproses</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Ditolak">Ditolak</option>
+          </select>
+        </div>
+        <div>
+          <button onclick="resetFilterPimpinan()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-3 rounded-xl text-xs transition">
+            🔄 Reset Filter
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statCardsPimpinan"></div>
@@ -324,7 +389,7 @@
   <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
     <a 
       id="linkBantuanWA"
-      href="https://wa.me/6282330263316?text=Assalamualaikum,%20saya%20ingin%20meminta%20bantuan%20terkait%20PTSP%20Online%20MTsN%203%20Banyuwangi." 
+      href="https://wa.me/6281234567890?text=Assalamualaikum,%20saya%20ingin%20meminta%20bantuan%20terkait%20PTSP%20Online%20MTsN%203%20Banyuwangi." 
       target="_blank" 
       rel="noopener noreferrer"
       class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full shadow-xl border-2 border-white transition transform hover:scale-105"
@@ -338,10 +403,12 @@
 
   <script>
     // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxihgXRh0rlZY69Rlfvo8xjaXpjDuz22SsFYI1XH1tO3KG0iofXb8wCE_MjewbCEp7a/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzicfvAzmOTNw4mh__2xCjBrGe_e3-JGm3IuaWEAwEpTu7yRdAkG72g2s2izxcWjPuA/exec';
+    const SURVEY_URL = 'https://aplikasi-m3b.github.io/SURVEY/';
 
     let currentRole = null;
     let currentPassword = null;
+    let dataPermohonanGlobal = [];
 
     const cardColorThemes = [
       {
@@ -640,6 +707,28 @@
       }
     }
 
+    // Fungsi Mengaktifkan Tombol Unduh Setelah Pemohon Klik Tombol Isi Survey
+    function aktifkanTombolUnduh(linkDokumen) {
+      const btnUnduh = document.getElementById('btnUnduhDokumenTracking');
+      if (!btnUnduh) return;
+
+      if (linkDokumen && linkDokumen !== '-' && linkDokumen.startsWith('http')) {
+        btnUnduh.disabled = false;
+        btnUnduh.onclick = () => window.open(linkDokumen, '_blank');
+        btnUnduh.className = 'inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-extrabold shadow-lg cursor-pointer transition transform hover:scale-105';
+      } else {
+        btnUnduh.disabled = false;
+        btnUnduh.onclick = () => Swal.fire({
+          icon: 'info',
+          title: 'Dokumen Fisik',
+          text: 'Terima kasih telah mengisi survey! Silakan mengambil dokumen hasil layanan di Ruang PTSP MTsN 3 Banyuwangi.',
+          confirmButtonColor: '#047857'
+        });
+        btnUnduh.className = 'inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-extrabold shadow-lg cursor-pointer transition';
+      }
+    }
+
+    // Cek Status Layanan (Tracking Layanan)
     async function cekStatus() {
       const tiket = document.getElementById('inputTiket').value.trim();
       if (!tiket) {
@@ -665,6 +754,8 @@
           if (d.status === 'Selesai') badgeColor = 'bg-emerald-100 text-emerald-800';
           if (d.status === 'Ditolak') badgeColor = 'bg-rose-100 text-rose-800';
 
+          const safeLink = (d.linkHasil || '-').replace(/'/g, "\\'");
+
           box.classList.remove('hidden');
           box.innerHTML = `
             <div class="space-y-2 text-sm">
@@ -674,11 +765,38 @@
               <p><strong>Tanggal Masuk:</strong> ${d.tanggalMasuk || d.tanggal}</p>
               ${d.status === 'Selesai' ? `<p><strong>Tanggal Selesai:</strong> ${d.tanggalSelesai} (${d.durasi})</p>` : ''}
               <p><strong>Status Saat Ini:</strong> <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badgeColor}">${d.status}</span></p>
-              ${d.linkHasil && d.linkHasil !== '-' && d.linkHasil.startsWith('http') ? `
-                <div class="pt-2">
-                  <a href="${d.linkHasil}" target="_blank" class="inline-block bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">
-                    📥 Unduh Dokumen Hasil Layanan
-                  </a>
+              
+              ${d.status === 'Selesai' ? `
+                <div class="pt-4 mt-3 border-t border-slate-200 space-y-3">
+                  <!-- Tombol Survey Kepuasan Layanan Publik -->
+                  <div>
+                    <a 
+                      href="${SURVEY_URL}" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onclick="aktifkanTombolUnduh('${safeLink}')"
+                      class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-xl text-xs md:text-sm font-extrabold shadow-md transition transform hover:scale-105"
+                    >
+                      📋 Survey Kepuasan Layanan Publik (Isi Survey)
+                    </a>
+                  </div>
+
+                  <!-- Tombol Unduh Dokumen Hasil Layanan (Awalnya Nonaktif sebelum klik Isi Survey) -->
+                  <div>
+                    <button 
+                      id="btnUnduhDokumenTracking" 
+                      type="button" 
+                      disabled
+                      class="inline-flex items-center gap-2 bg-slate-300 text-slate-500 px-5 py-2.5 rounded-xl text-xs md:text-sm font-extrabold cursor-not-allowed transition"
+                    >
+                      📥 Unduh Dokumen Hasil Layanan
+                    </button>
+                  </div>
+
+                  <!-- Keterangan Wajib Isi Survey -->
+                  <p class="text-xs text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-xl leading-relaxed font-medium">
+                    Unduh dokumen bisa dilakukan jika Bapak/Ibu/Saudara sudah mengisi Survey Layanan Publik, Mohon kesediaan Bapak/Ibu/Saudara memberikan penilaian terhadap layanan PTSP MTsN 3 Banyuwangi, sebelum mengunduh Dokumen.
+                  </p>
                 </div>
               ` : ''}
             </div>
@@ -690,6 +808,99 @@
       } catch (e) {
         Swal.fire({ icon: 'error', title: 'Gagal Memeriksa', text: 'Tidak dapat terhubung ke server.', confirmButtonColor: '#dc2626' });
       }
+    }
+
+    // Helper Konversi Tanggal DD-MM-YYYY HH:mm ke YYYY-MM-DD dan YYYY-MM untuk Filter
+    function ekstrakTanggalDanBulan(strTanggal) {
+      if (!strTanggal || strTanggal === '-') return { ymd: '', ym: '' };
+      const bagianTanggal = String(strTanggal).split(' ')[0];
+      const parts = bagianTanggal.split('-');
+      if (parts.length !== 3) return { ymd: '', ym: '' };
+      const [dd, mm, yyyy] = parts;
+      return {
+        ymd: `${yyyy}-${mm}-${dd}`,
+        ym: `${yyyy}-${mm}`
+      };
+    }
+
+    // Mengisi Pilihan Dropdown Filter Kategori & Layanan
+    function muatOpsiFilterLayanan() {
+      const selectPetugas = document.getElementById('filterLayananPetugas');
+      const selectPimpinan = document.getElementById('filterLayananPimpinan');
+
+      const kategoriUnik = [...new Set(daftarLayanan.map(x => x.kategori))];
+      let htmlOpsi = '<option value="">Semua Kategori & Layanan</option>';
+
+      kategoriUnik.forEach(kat => {
+        htmlOpsi += `<option value="KAT:${kat}">📁 Semua ${kat}</option>`;
+      });
+
+      daftarLayanan.forEach(item => {
+        htmlOpsi += `<option value="LAY:${item.nama}">📄 ${item.kategori} - ${item.nama}</option>`;
+      });
+
+      if (selectPetugas) selectPetugas.innerHTML = htmlOpsi;
+      if (selectPimpinan) selectPimpinan.innerHTML = htmlOpsi;
+    }
+
+    // Filter Data Permohonan Berdasarkan Input Filter
+    function saringDataPermohonan(nilaiLayanan, nilaiTanggal, nilaiBulan, nilaiStatus) {
+      return dataPermohonanGlobal.filter(item => {
+        // 1. Filter Kategori & Layanan
+        if (nilaiLayanan) {
+          if (nilaiLayanan.startsWith('KAT:')) {
+            const kat = nilaiLayanan.replace('KAT:', '');
+            if (item.kategori !== kat) return false;
+          } else if (nilaiLayanan.startsWith('LAY:')) {
+            const lay = nilaiLayanan.replace('LAY:', '');
+            if (item.layanan !== lay) return false;
+          }
+        }
+
+        // 2. Filter Tanggal & Bulan
+        const { ymd, ym } = ekstrakTanggalDanBulan(item.tanggalMasuk || item.tanggal);
+        if (nilaiTanggal && ymd !== nilaiTanggal) return false;
+        if (nilaiBulan && ym !== nilaiBulan) return false;
+
+        // 3. Filter Status
+        if (nilaiStatus && item.status !== nilaiStatus) return false;
+
+        return true;
+      });
+    }
+
+    function terapkanFilterPetugas() {
+      const lay = document.getElementById('filterLayananPetugas').value;
+      const tgl = document.getElementById('filterTanggalPetugas').value;
+      const bln = document.getElementById('filterBulanPetugas').value;
+      const sts = document.getElementById('filterStatusPetugas').value;
+      const hasil = saringDataPermohonan(lay, tgl, bln, sts);
+      renderTabelPetugas(hasil);
+    }
+
+    function resetFilterPetugas() {
+      document.getElementById('filterLayananPetugas').value = '';
+      document.getElementById('filterTanggalPetugas').value = '';
+      document.getElementById('filterBulanPetugas').value = '';
+      document.getElementById('filterStatusPetugas').value = '';
+      renderTabelPetugas(dataPermohonanGlobal);
+    }
+
+    function terapkanFilterPimpinan() {
+      const lay = document.getElementById('filterLayananPimpinan').value;
+      const tgl = document.getElementById('filterTanggalPimpinan').value;
+      const bln = document.getElementById('filterBulanPimpinan').value;
+      const sts = document.getElementById('filterStatusPimpinan').value;
+      const hasil = saringDataPermohonan(lay, tgl, bln, sts);
+      renderDashboardPimpinan(hasil);
+    }
+
+    function resetFilterPimpinan() {
+      document.getElementById('filterLayananPimpinan').value = '';
+      document.getElementById('filterTanggalPimpinan').value = '';
+      document.getElementById('filterBulanPimpinan').value = '';
+      document.getElementById('filterStatusPimpinan').value = '';
+      renderDashboardPimpinan(dataPermohonanGlobal);
     }
 
     async function prosesLogin(e) {
@@ -714,6 +925,12 @@
         if (result.status === 'success') {
           currentRole = role;
           currentPassword = password;
+          if (result.layanan && result.layanan.length > 0) {
+            daftarLayanan = result.layanan;
+          }
+          dataPermohonanGlobal = result.permohonan || [];
+          muatOpsiFilterLayanan();
+
           document.getElementById('modalLogin').classList.add('hidden');
           document.getElementById('loginPassword').value = '';
           document.getElementById('publicView').classList.add('hidden');
@@ -727,20 +944,19 @@
               document.getElementById('setWaAdmin').value = result.settings.WA_ADMIN || '';
               document.getElementById('setEmailAdmin').value = result.settings.EMAIL_ADMIN || '';
             }
-            daftarLayanan = result.layanan || [];
             renderAdminLayanan();
           } else if (role === 'petugas') {
             document.getElementById('petugasView').classList.remove('hidden');
-            renderTabelPetugas(result.permohonan || []);
+            resetFilterPetugas();
           } else if (role === 'pimpinan') {
             document.getElementById('pimpinanView').classList.remove('hidden');
-            renderDashboardPimpinan(result.permohonan || []);
+            resetFilterPimpinan();
           }
 
           Swal.fire({
             icon: 'success',
             title: `Selamat Datang, ${role.toUpperCase()}!`,
-            timer: 1600,
+            timer: 1500,
             showConfirmButton: false
           });
         } else {
@@ -845,6 +1061,7 @@
       const result = await res.json();
       if (result.status === 'success') {
         daftarLayanan = result.layanan;
+        muatOpsiFilterLayanan();
         renderAdminLayanan();
         resetFormLayanan();
         Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Data layanan berhasil diperbarui.', confirmButtonColor: '#047857' });
@@ -873,37 +1090,43 @@
       const result = await res.json();
       if (result.status === 'success') {
         daftarLayanan = result.layanan;
+        muatOpsiFilterLayanan();
         renderAdminLayanan();
         Swal.fire({ icon: 'success', title: 'Terhapus!', timer: 1200, showConfirmButton: false });
       }
     }
 
+    // Render Tabel Petugas (Mendukung Filter Dinamis)
     function renderTabelPetugas(list) {
       const tbody = document.getElementById('tabelPetugas');
       tbody.innerHTML = '';
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada pengajuan layanan.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Tidak ada data permohonan yang sesuai dengan filter.</td></tr>';
         return;
       }
-      list.forEach((item, i) => {
+      list.forEach((item) => {
         const rincian = Object.entries(item.detail || {}).map(([k, v]) => `<b>${k}:</b> ${v}`).join('<br>');
         tbody.innerHTML += `
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">Masuk: ${item.tanggalMasuk || item.tanggal}</span></td>
             <td class="p-3"><b>${item.nama}</b><br><span class="text-emerald-700">${item.email}</span><br>WA: ${item.whatsapp}</td>
-            <td class="p-3"><span class="font-bold text-emerald-800">${item.layanan}</span><br><div class="mt-1 text-slate-600">${rincian}</div></td>
+            <td class="p-3">
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">${item.kategori}</span><br>
+              <span class="font-bold text-emerald-900">${item.layanan}</span>
+              <div class="mt-1 text-slate-600">${rincian}</div>
+            </td>
             <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg font-bold inline-block">📄 Buka Berkas</a>` : '-'}</td>
             <td class="p-3 space-y-2">
-              <select id="status_${i}" class="border rounded-lg px-2.5 py-1.5 w-full font-semibold">
+              <select id="status_${item.kode}" class="border rounded-lg px-2.5 py-1.5 w-full font-semibold">
                 <option value="Menunggu Verifikasi" ${item.status === 'Menunggu Verifikasi' ? 'selected' : ''}>Menunggu Verifikasi</option>
                 <option value="Sedang Diproses" ${item.status === 'Sedang Diproses' ? 'selected' : ''}>Sedang Diproses</option>
                 <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                 <option value="Ditolak" ${item.status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
               </select>
-              <input type="text" id="hasil_${i}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Tempel Link Dokumen Hasil (Google Drive, dll)" class="border rounded-lg px-2.5 py-1.5 w-full">
+              <input type="text" id="hasil_${item.kode}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Tempel Link Dokumen Hasil (Google Drive, dll)" class="border rounded-lg px-2.5 py-1.5 w-full">
             </td>
             <td class="p-3">
-              <button onclick="simpanStatusPetugas('${item.kode}', ${i})" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-bold shadow transition">
+              <button onclick="simpanStatusPetugas('${item.kode}')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-bold shadow transition">
                 💾 Simpan
               </button>
             </td>
@@ -912,9 +1135,9 @@
       });
     }
 
-    async function simpanStatusPetugas(kode, index) {
-      const statusBaru = document.getElementById(`status_${index}`).value;
-      const linkHasil = document.getElementById(`hasil_${index}`).value.trim() || '-';
+    async function simpanStatusPetugas(kode) {
+      const statusBaru = document.getElementById(`status_${kode}`).value;
+      const linkHasil = document.getElementById(`hasil_${kode}`).value.trim() || '-';
 
       if (statusBaru === 'Selesai' && linkHasil === '-') {
         const tanya = await Swal.fire({
@@ -944,14 +1167,16 @@
           password: currentPassword,
           kode,
           statusBaru,
-          linkHasil
+          linkHasil,
+          gasUrl: GAS_URL
         })
       });
       const result = await res.json();
 
       if (result.status === 'success') {
+        dataPermohonanGlobal = result.permohonan || [];
         const pesanEmail = (statusBaru === 'Selesai' && linkHasil !== '-')
-          ? `Notifikasi Layanan Selesai beserta Link Dokumen telah dikirim ke email <strong>${result.emailTujuan}</strong>.`
+          ? `Notifikasi Layanan Selesai beserta tautan Survey & Dokumen telah dikirim ke email <strong>${result.emailTujuan}</strong>.`
           : `Status diperbarui menjadi <strong>${statusBaru}</strong> dan email pemberitahuan telah dikirim ke <strong>${result.emailTujuan}</strong>.`;
 
         Swal.fire({
@@ -960,13 +1185,13 @@
           html: pesanEmail,
           confirmButtonColor: '#047857'
         });
-        renderTabelPetugas(result.permohonan);
+        terapkanFilterPetugas();
       } else {
         Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: result.message, confirmButtonColor: '#dc2626' });
       }
     }
 
-    // Pimpinan: Render Monitoring Lengkap dengan Tanggal Masuk, Tanggal Selesai, dan Durasi Jam Menit
+    // Pimpinan: Render Monitoring & Statistik (Mendukung Filter Dinamis)
     function renderDashboardPimpinan(list) {
       const total = list.length;
       const menunggu = list.filter(x => x.status === 'Menunggu Verifikasi').length;
@@ -982,7 +1207,7 @@
 
       const tbody = document.getElementById('tabelPimpinan');
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Belum ada data permohonan layanan.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Tidak ada data permohonan layanan yang sesuai dengan filter.</td></tr>';
         return;
       }
 
