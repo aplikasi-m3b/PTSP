@@ -33,9 +33,7 @@
   <!-- Top Bar Navigasi Login -->
   <div class="bg-emerald-950 text-emerald-100 text-xs py-2.5 px-4 shadow-sm">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <span>📧 Email Resmi layanan PTSP: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
-      <span>✆ WA Resmi layanan PTSP: <strong id="labelEmailHeader">085151700372</strong></span>
-    
+      <span>📧 Email Resmi: <strong id="labelEmailHeader">aplikasi.m3b@gmail.com</strong></span>
       <div>
         <button id="btnOpenLogin" onclick="toggleModalLogin()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-bold transition shadow">
           🔐 Login Sistem
@@ -93,7 +91,7 @@
         </div>
         <p class="text-xs text-slate-500 mb-4">Masukkan Kode Layanan yang telah dikirimkan ke alamat Email Anda.</p>
         <div class="flex flex-col sm:flex-row gap-3">
-          <input id="inputTiket" type="text" placeholder="Contoh: PTSP-20261104-1234" class="flex-1 border-2 border-slate-200 focus:border-emerald-600 outline-none rounded-xl px-4 py-2.5 text-sm font-semibold">
+          <input id="inputTiket" type="text" placeholder="Contoh: PTSP-20261123-1234" class="flex-1 border-2 border-slate-200 focus:border-emerald-600 outline-none rounded-xl px-4 py-2.5 text-sm font-semibold">
           <button onclick="cekStatus()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow transition">
             Lacak Sekarang
           </button>
@@ -118,7 +116,7 @@
           </div>
           <div class="text-right">
             <span class="inline-block bg-rose-600 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">BIAYA: GRATIS</span>
-            <p class="text-xs text-slate-500 mt-1">Estimasi: 1 Hari Kerja</p>
+            <p class="text-xs text-slate-500 mt-1">Estimasi: 24 Jam (1 Hari Kerja)</p>
           </div>
         </div>
 
@@ -143,7 +141,7 @@
             </div>
             <div>
               <label class="block text-sm font-bold mb-1">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
-              <input type="tel" id="whatsapp" required placeholder="085151700372" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <input type="tel" id="whatsapp" required placeholder="08123456789" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
               <span class="text-xs text-slate-500 mt-1 block">Nomor aktif untuk konfirmasi petugas.</span>
             </div>
           </div>
@@ -183,7 +181,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold mb-1">No. WA Admin / Petugas (Awali 62)</label>
-            <input type="text" id="setWaAdmin" required placeholder="6281234567890" class="w-full border rounded-lg px-3 py-2 text-sm">
+            <input type="text" id="setWaAdmin" required placeholder="6285151700372" class="w-full border rounded-lg px-3 py-2 text-sm">
           </div>
           <div>
             <label class="block text-xs font-bold mb-1">Email Pengirim / Admin</label>
@@ -242,10 +240,15 @@
 
     <!-- ================= DASHBOARD PETUGAS ================= -->
     <div id="petugasView" class="hidden space-y-6">
-      <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
-        <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
-        <p class="text-xs text-blue-700">Ubah status menjadi <strong>Selesai</strong>, tempelkan <strong>Link Dokumen Hasil</strong>, lalu klik <strong>Simpan</strong> untuk mencatat waktu selesai & durasi pengerjaan sekaligus mengirim email ke pemohon.</p>
+      <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex flex-wrap justify-between items-center gap-2">
+        <div>
+          <h2 class="text-lg font-bold text-blue-900">Dashboard Petugas PTSP</h2>
+          <p class="text-xs text-blue-700">Standar Estimasi Layanan: <strong>24 Jam (1 Hari Kerja)</strong>. Ubah status menjadi <strong>Sedang Diproses</strong> saat mulai menangani, dan <strong>Selesai</strong> setelah dokumen diunggah.</p>
+        </div>
       </div>
+
+      <!-- Notifikasi Peringatan Jika Ada Layanan Melebihi Estimasi 24 Jam (Kompensasi) -->
+      <div id="alertEstimasiPetugas" class="hidden bg-rose-50 border-2 border-rose-500 p-4 rounded-2xl shadow-md"></div>
 
       <!-- Bar Filter Petugas -->
       <div class="bg-white p-4 rounded-2xl shadow border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
@@ -284,10 +287,11 @@
         <table class="w-full text-left border-collapse text-xs">
           <thead>
             <tr class="bg-slate-100 text-slate-700 border-b">
-              <th class="p-3">Kode & Waktu Masuk</th>
+              <th class="p-3">Kode & Waktu Pengajuan</th>
               <th class="p-3">Pemohon & Kontak</th>
               <th class="p-3">Kategori & Layanan</th>
-              <th class="p-3">Berkas Masuk</th>
+              <th class="p-3">Waktu Pengajuan s.d. Diproses & Estimasi (24 Jam)</th>
+              <th class="p-3">Berkas</th>
               <th class="p-3">Status & Link Dokumen Hasil</th>
               <th class="p-3">Aksi</th>
             </tr>
@@ -301,8 +305,11 @@
     <div id="pimpinanView" class="hidden space-y-6">
       <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
         <h2 class="text-lg font-bold text-amber-900">Dashboard Monitoring Pimpinan</h2>
-        <p class="text-xs text-amber-800">Pemantauan seluruh layanan PTSP Online MTsN 3 Banyuwangi lengkap dengan filter, waktu masuk, waktu selesai, dan durasi pengerjaan</p>
+        <p class="text-xs text-amber-800">Pemantauan kecepatan respon petugas, total durasi pengerjaan, serta kepatuhan estimasi layanan <strong>24 Jam (1 Hari Kerja)</strong></p>
       </div>
+
+      <!-- Notifikasi Peringatan Jika Ada Layanan Melebihi Estimasi 24 Jam (Kompensasi) -->
+      <div id="alertEstimasiPimpinan" class="hidden bg-rose-50 border-2 border-rose-500 p-4 rounded-2xl shadow-md"></div>
 
       <!-- Bar Filter Pimpinan -->
       <div class="bg-white p-4 rounded-2xl shadow border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
@@ -337,7 +344,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="statCardsPimpinan"></div>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="statCardsPimpinan"></div>
 
       <div class="bg-white p-4 rounded-2xl shadow border overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
@@ -346,9 +353,10 @@
               <th class="p-3 rounded-tl-xl">Kode Layanan</th>
               <th class="p-3">Nama Pemohon</th>
               <th class="p-3">Kategori & Layanan</th>
-              <th class="p-3">Tanggal Permohonan Layanan Masuk</th>
-              <th class="p-3">Tanggal Permohonan Layanan Selesai</th>
-              <th class="p-3">Durasi Pengerjaan Layanan</th>
+              <th class="p-3">Tanggal Permohonan Masuk</th>
+              <th class="p-3">Waktu Pengajuan s.d. Diproses</th>
+              <th class="p-3">Tanggal Permohonan Selesai</th>
+              <th class="p-3">Total Durasi & Estimasi (24 Jam)</th>
               <th class="p-3">Status</th>
               <th class="p-3 rounded-tr-xl">Dokumen</th>
             </tr>
@@ -391,7 +399,7 @@
   <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
     <a 
       id="linkBantuanWA"
-      href="https://wa.me/6285151700372?text=Assalamualaikum,%20saya%20ingin%20meminta%20bantuan%20terkait%20PTSP%20Online%20MTsN%203%20Banyuwangi."
+      href="https://wa.me/6285151700372?text=Assalamualaikum,%20saya%20ingin%20meminta%20bantuan%20terkait%20PTSP%20Online%20MTsN%203%20Banyuwangi." 
       target="_blank" 
       rel="noopener noreferrer"
       class="flex items-center gap-2.5 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full shadow-xl border-2 border-white transition transform hover:scale-105"
@@ -405,7 +413,7 @@
 
   <script>
     // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzicfvAzmOTNw4mh__2xCjBrGe_e3-JGm3IuaWEAwEpTu7yRdAkG72g2s2izxcWjPuA/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzM8SbMtfTEIIcIJK5yUuly8R_BVr9liEeNZSkGpF-RxM74u3aLZqUStSSFx4QUURL2/exec';
     const SURVEY_URL = 'https://aplikasi-m3b.github.io/SURVEY/';
 
     let currentRole = null;
@@ -514,7 +522,7 @@
       }
     });
 
-   function updateLinkBantuan(nomor) {
+    function updateLinkBantuan(nomor) {
       let bersih = String(nomor).replace(/[^0-9]/g, '');
       if (bersih.startsWith('0')) {
         bersih = '62' + bersih.slice(1);
@@ -549,7 +557,7 @@
 
               <div class="mt-3 p-3 rounded-xl bg-slate-50 group-hover:bg-white/15 border border-slate-200/80 group-hover:border-white/30 text-xs transition space-y-1">
                 <p class="text-slate-700 group-hover:text-white leading-relaxed">
-                  ⏱️ <strong>Estimasi layanan:</strong> 1 Hari kerja <span class="italic opacity-90">(Jika syarat terpenuhi dan sistem berjalan normal)</span>
+                  ⏱️ <strong>Estimasi layanan:</strong> 24 Jam (1 Hari kerja) <span class="italic opacity-90">(Jika syarat terpenuhi dan sistem berjalan normal)</span>
                 </p>
                 <p class="text-slate-800 group-hover:text-yellow-300 font-extrabold text-sm pt-0.5">
                   🏷️ Biaya: <span class="underline decoration-2">GRATIS</span> (Rp 0,-)
@@ -712,7 +720,6 @@
       }
     }
 
-    // Fungsi Mengaktifkan Tombol Unduh Setelah Pemohon Klik Tombol Isi Survey
     function aktifkanTombolUnduh(linkDokumen) {
       const btnUnduh = document.getElementById('btnUnduhDokumenTracking');
       if (!btnUnduh) return;
@@ -731,6 +738,53 @@
         });
         btnUnduh.className = 'inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-extrabold shadow-lg cursor-pointer transition';
       }
+    }
+
+    // Membangun HTML Timeline Status (Garis Lurus & Titik-Titik Keterangan + Waktu)
+    function renderTimelineHTML(d) {
+      const sudahDiproses = (d.status === 'Sedang Diproses' || d.status === 'Selesai') && (d.waktuDiprosesIndo && d.waktuDiprosesIndo !== '-');
+      const sudahSelesai = d.status === 'Selesai';
+      const ditolak = d.status === 'Ditolak';
+
+      const waktuMasukTeks = d.waktuMasukIndo || d.tanggalMasuk || d.tanggal;
+      const waktuProsesTeks = sudahDiproses
+        ? `${d.waktuDiprosesIndo} WIB`
+        : (ditolak ? 'Permohonan ditolak saat verifikasi' : 'Menunggu giliran verifikasi petugas');
+      const waktuSelesaiTeks = sudahSelesai
+        ? `${(d.waktuSelesaiIndo && d.waktuSelesaiIndo !== '-' ? d.waktuSelesaiIndo : d.tanggalSelesai)} WIB`
+        : (ditolak ? `${(d.waktuSelesaiIndo && d.waktuSelesaiIndo !== '-' ? d.waktuSelesaiIndo : d.tanggalSelesai)} WIB` : 'Menunggu penyelesaian layanan');
+
+      return `
+        <div class="mt-4 pt-4 border-t border-slate-200">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-3">📍 Riwayat / Timeline Proses Layanan</p>
+          <div class="relative ml-3 pl-6 border-l-2 border-emerald-500 space-y-5">
+            
+            <!-- Titik 1: Pengajuan Layanan -->
+            <div class="relative">
+              <span class="absolute -left-[33px] top-0.5 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-emerald-100"></span>
+              <p class="text-sm font-extrabold text-slate-800">Pengajuan Layanan</p>
+              <p class="text-xs font-semibold text-emerald-700">${waktuMasukTeks} WIB</p>
+            </div>
+
+            <!-- Titik 2: Sedang Diproses -->
+            <div class="relative">
+              <span class="absolute -left-[33px] top-0.5 w-4 h-4 rounded-full ${sudahDiproses ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-300 ring-4 ring-slate-100'}"></span>
+              <p class="text-sm font-extrabold ${sudahDiproses ? 'text-slate-800' : 'text-slate-400'}">Sedang Diproses</p>
+              <p class="text-xs ${sudahDiproses ? 'font-semibold text-blue-700' : 'text-slate-400 italic'}">${waktuProsesTeks}</p>
+            </div>
+
+            <!-- Titik 3: Selesai / Ditolak -->
+            <div class="relative">
+              <span class="absolute -left-[33px] top-0.5 w-4 h-4 rounded-full ${sudahSelesai ? 'bg-emerald-600 ring-4 ring-emerald-100' : (ditolak ? 'bg-rose-600 ring-4 ring-rose-100' : 'bg-slate-300 ring-4 ring-slate-100')}"></span>
+              <p class="text-sm font-extrabold ${sudahSelesai ? 'text-emerald-800' : (ditolak ? 'text-rose-700' : 'text-slate-400')}">
+                ${ditolak ? 'Permohonan Ditolak' : 'Selesai'}
+              </p>
+              <p class="text-xs ${sudahSelesai ? 'font-semibold text-emerald-700' : (ditolak ? 'font-semibold text-rose-600' : 'text-slate-400 italic')}">${waktuSelesaiTeks}</p>
+            </div>
+
+          </div>
+        </div>
+      `;
     }
 
     // Cek Status Layanan (Tracking Layanan)
@@ -756,10 +810,12 @@
         if (result.status === 'success') {
           const d = result.data;
           let badgeColor = 'bg-amber-100 text-amber-800';
+          if (d.status === 'Sedang Diproses') badgeColor = 'bg-blue-100 text-blue-800';
           if (d.status === 'Selesai') badgeColor = 'bg-emerald-100 text-emerald-800';
           if (d.status === 'Ditolak') badgeColor = 'bg-rose-100 text-rose-800';
 
           const safeLink = (d.linkHasil || '-').replace(/'/g, "\\'");
+          const timelineHTML = renderTimelineHTML(d);
 
           box.classList.remove('hidden');
           box.innerHTML = `
@@ -767,13 +823,14 @@
               <p><strong>Kode Layanan:</strong> <span class="text-emerald-700 font-bold">${d.kode}</span></p>
               <p><strong>Nama Pemohon:</strong> ${d.nama}</p>
               <p><strong>Jenis Layanan:</strong> ${d.layanan}</p>
-              <p><strong>Tanggal Masuk:</strong> ${d.tanggalMasuk || d.tanggal}</p>
-              ${d.status === 'Selesai' ? `<p><strong>Tanggal Selesai:</strong> ${d.tanggalSelesai} (${d.durasi})</p>` : ''}
+              <p><strong>Estimasi Layanan:</strong> 24 Jam (1 Hari Kerja)</p>
               <p><strong>Status Saat Ini:</strong> <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badgeColor}">${d.status}</span></p>
               
+              <!-- Timeline Garis Lurus & Titik-Titik -->
+              ${timelineHTML}
+
               ${d.status === 'Selesai' ? `
-                <div class="pt-4 mt-3 border-t border-slate-200 space-y-3">
-                  <!-- Tombol Survey Kepuasan Layanan Publik -->
+                <div class="pt-4 mt-4 border-t border-slate-200 space-y-3">
                   <div>
                     <a 
                       href="${SURVEY_URL}" 
@@ -786,7 +843,6 @@
                     </a>
                   </div>
 
-                  <!-- Tombol Unduh Dokumen Hasil Layanan (Awalnya Nonaktif sebelum klik Isi Survey) -->
                   <div>
                     <button 
                       id="btnUnduhDokumenTracking" 
@@ -798,7 +854,6 @@
                     </button>
                   </div>
 
-                  <!-- Keterangan Wajib Isi Survey -->
                   <p class="text-xs text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-xl leading-relaxed font-medium">
                     Unduh dokumen bisa dilakukan jika Bapak/Ibu/Saudara sudah mengisi Survey Layanan Publik, Mohon kesediaan Bapak/Ibu/Saudara memberikan penilaian terhadap layanan PTSP MTsN 3 Banyuwangi, sebelum mengunduh Dokumen.
                   </p>
@@ -815,7 +870,6 @@
       }
     }
 
-    // Helper Konversi Tanggal DD-MM-YYYY HH:mm ke YYYY-MM-DD dan YYYY-MM untuk Filter
     function ekstrakTanggalDanBulan(strTanggal) {
       if (!strTanggal || strTanggal === '-') return { ymd: '', ym: '' };
       const bagianTanggal = String(strTanggal).split(' ')[0];
@@ -828,7 +882,6 @@
       };
     }
 
-    // Mengisi Pilihan Dropdown Filter Kategori & Layanan
     function muatOpsiFilterLayanan() {
       const selectPetugas = document.getElementById('filterLayananPetugas');
       const selectPimpinan = document.getElementById('filterLayananPimpinan');
@@ -848,10 +901,8 @@
       if (selectPimpinan) selectPimpinan.innerHTML = htmlOpsi;
     }
 
-    // Filter Data Permohonan Berdasarkan Input Filter
     function saringDataPermohonan(nilaiLayanan, nilaiTanggal, nilaiBulan, nilaiStatus) {
       return dataPermohonanGlobal.filter(item => {
-        // 1. Filter Kategori & Layanan
         if (nilaiLayanan) {
           if (nilaiLayanan.startsWith('KAT:')) {
             const kat = nilaiLayanan.replace('KAT:', '');
@@ -861,17 +912,51 @@
             if (item.layanan !== lay) return false;
           }
         }
-
-        // 2. Filter Tanggal & Bulan
         const { ymd, ym } = ekstrakTanggalDanBulan(item.tanggalMasuk || item.tanggal);
         if (nilaiTanggal && ymd !== nilaiTanggal) return false;
         if (nilaiBulan && ym !== nilaiBulan) return false;
-
-        // 3. Filter Status
         if (nilaiStatus && item.status !== nilaiStatus) return false;
-
         return true;
       });
+    }
+
+    // Banner Pemberitahuan Layanan Melebihi Estimasi 24 Jam (Kompensasi)
+    function renderBannerEstimasi(elementId, list) {
+      const banner = document.getElementById(elementId);
+      if (!banner) return;
+
+      const daftarLewatSelesai = list.filter(x => x.melebihiEstimasi === true);
+      const daftarLewatBerjalan = list.filter(x => x.melewatiBatasBerjalan === true);
+
+      if (daftarLewatSelesai.length === 0 && daftarLewatBerjalan.length === 0) {
+        banner.classList.add('hidden');
+        banner.innerHTML = '';
+        return;
+      }
+
+      const kodeLewat = daftarLewatSelesai.map(x => `${x.kode} (${x.nama})`).join(', ');
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="text-2xl">🚨</span>
+          <div class="text-xs md:text-sm text-rose-900 space-y-1">
+            <p class="font-extrabold text-rose-800 text-sm md:text-base">
+              PEMBERITAHUAN LAYANAN MELEBIHI ESTIMASI (24 JAM / 1 HARI KERJA)
+            </p>
+            ${daftarLewatSelesai.length > 0 ? `
+              <p>
+                Terdapat <strong>${daftarLewatSelesai.length} layanan selesai melebihi estimasi waktu 24 jam</strong> (${kodeLewat}). 
+                <span class="bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded">Pemohon berhak mendapatkan kompensasi layanan.</span>
+              </p>
+            ` : ''}
+            ${daftarLewatBerjalan.length > 0 ? `
+              <p class="text-amber-900 font-semibold">
+                ⚠️ Selain itu, terdapat <strong>${daftarLewatBerjalan.length} permohonan aktif</strong> yang sudah melewati batas 24 jam dan belum selesai.
+              </p>
+            ` : ''}
+          </div>
+        </div>
+      `;
     }
 
     function terapkanFilterPetugas() {
@@ -1101,24 +1186,58 @@
       }
     }
 
-    // Render Tabel Petugas (Mendukung Filter Dinamis)
+    // Render Tabel Petugas (Menampilkan Waktu Pengajuan s.d. Diproses & Peringatan Estimasi 24 Jam)
     function renderTabelPetugas(list) {
+      renderBannerEstimasi('alertEstimasiPetugas', list);
+
       const tbody = document.getElementById('tabelPetugas');
       tbody.innerHTML = '';
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Tidak ada data permohonan yang sesuai dengan filter.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Tidak ada data permohonan yang sesuai dengan filter.</td></tr>';
         return;
       }
       list.forEach((item) => {
         const rincian = Object.entries(item.detail || {}).map(([k, v]) => `<b>${k}:</b> ${v}`).join('<br>');
+
+        let infoEstimasiHTML = '<span class="text-[11px] text-slate-500">Estimasi: 24 Jam (1 Hari Kerja)</span>';
+        if (item.melebihiEstimasi) {
+          infoEstimasiHTML = `
+            <div class="mt-1.5 p-2 rounded-lg bg-rose-100 border border-rose-300 text-rose-900 font-bold text-[11px]">
+              ⚠️ Melebihi Estimasi (${item.durasi}) — Pemohon berhak mendapatkan kompensasi.
+            </div>
+          `;
+        } else if (item.melewatiBatasBerjalan) {
+          infoEstimasiHTML = `
+            <div class="mt-1.5 p-2 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 font-bold text-[11px]">
+              ⏳ Sudah melewati 24 Jam (Segera selesaikan!)
+            </div>
+          `;
+        } else if (item.status === 'Selesai') {
+          infoEstimasiHTML = `
+            <span class="inline-block mt-1 px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px]">
+              ✅ Tepat Waktu (${item.durasi})
+            </span>
+          `;
+        }
+
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-bold">${item.kode}<br><span class="font-normal text-slate-500">Masuk: ${item.tanggalMasuk || item.tanggal}</span></td>
+          <tr class="hover:bg-slate-50 ${item.melebihiEstimasi ? 'bg-rose-50/40' : ''}">
+            <td class="p-3 font-bold">
+              ${item.kode}<br>
+              <span class="font-normal text-slate-500">Masuk: ${item.tanggalMasuk || item.tanggal}</span>
+            </td>
             <td class="p-3"><b>${item.nama}</b><br><span class="text-emerald-700">${item.email}</span><br>WA: ${item.whatsapp}</td>
             <td class="p-3">
               <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">${item.kategori}</span><br>
               <span class="font-bold text-emerald-900">${item.layanan}</span>
               <div class="mt-1 text-slate-600">${rincian}</div>
+            </td>
+            <td class="p-3 space-y-1">
+              <p class="text-[11px] text-slate-600">Mulai Diproses: <strong>${item.tanggalDiproses || '-'}</strong></p>
+              <p class="text-[11px] text-blue-800 font-bold">
+                ⏱️ Pengajuan s.d. Diproses: ${item.durasiRespon && item.durasiRespon !== '-' ? item.durasiRespon : '<span class="text-slate-400 font-normal italic">Belum diproses</span>'}
+              </p>
+              ${infoEstimasiHTML}
             </td>
             <td class="p-3">${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg font-bold inline-block">📄 Buka Berkas</a>` : '-'}</td>
             <td class="p-3 space-y-2">
@@ -1128,7 +1247,7 @@
                 <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                 <option value="Ditolak" ${item.status === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
               </select>
-              <input type="text" id="hasil_${item.kode}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Tempel Link Dokumen Hasil (Google Drive, dll)" class="border rounded-lg px-2.5 py-1.5 w-full">
+              <input type="text" id="hasil_${item.kode}" value="${item.linkHasil !== '-' ? item.linkHasil : ''}" placeholder="Tempel Link Dokumen Hasil" class="border rounded-lg px-2.5 py-1.5 w-full">
             </td>
             <td class="p-3">
               <button onclick="simpanStatusPetugas('${item.kode}')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl font-bold shadow transition">
@@ -1158,8 +1277,8 @@
       }
 
       Swal.fire({
-        title: 'Menyimpan & Mengirim Email...',
-        text: 'Mohon tunggu, sistem sedang mencatat waktu selesai, durasi pengerjaan, dan mengirim email.',
+        title: 'Menyimpan & Memperbarui Timeline...',
+        text: 'Mohon tunggu, sistem sedang mencatat waktu tahapan layanan dan mengirim notifikasi email.',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading()
       });
@@ -1196,23 +1315,27 @@
       }
     }
 
-    // Pimpinan: Render Monitoring & Statistik (Mendukung Filter Dinamis)
+    // Pimpinan: Render Monitoring Lengkap (Waktu Pengajuan s.d. Diproses, Total Durasi, & Peringatan Estimasi/Kompensasi)
     function renderDashboardPimpinan(list) {
+      renderBannerEstimasi('alertEstimasiPimpinan', list);
+
       const total = list.length;
       const menunggu = list.filter(x => x.status === 'Menunggu Verifikasi').length;
       const diproses = list.filter(x => x.status === 'Sedang Diproses').length;
       const selesai = list.filter(x => x.status === 'Selesai').length;
+      const melebihi = list.filter(x => x.melebihiEstimasi === true).length;
 
       document.getElementById('statCardsPimpinan').innerHTML = `
         <div class="bg-white p-4 rounded-xl shadow border border-slate-200"><p class="text-xs text-slate-500">Total Permohonan</p><p class="text-2xl font-extrabold text-slate-800">${total}</p></div>
         <div class="bg-white p-4 rounded-xl shadow border border-amber-200"><p class="text-xs text-amber-700">Menunggu Verifikasi</p><p class="text-2xl font-extrabold text-amber-600">${menunggu}</p></div>
         <div class="bg-white p-4 rounded-xl shadow border border-blue-200"><p class="text-xs text-blue-700">Sedang Diproses</p><p class="text-2xl font-extrabold text-blue-600">${diproses}</p></div>
         <div class="bg-white p-4 rounded-xl shadow border border-emerald-200"><p class="text-xs text-emerald-700">Layanan Selesai</p><p class="text-2xl font-extrabold text-emerald-600">${selesai}</p></div>
+        <div class="bg-rose-50 p-4 rounded-xl shadow border border-rose-300"><p class="text-xs text-rose-800 font-bold">Melebihi Estimasi (Kompensasi)</p><p class="text-2xl font-extrabold text-rose-700">${melebihi}</p></div>
       `;
 
       const tbody = document.getElementById('tabelPimpinan');
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Tidak ada data permohonan layanan yang sesuai dengan filter.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Tidak ada data permohonan layanan yang sesuai dengan filter.</td></tr>';
         return;
       }
 
@@ -1222,18 +1345,43 @@
         if (item.status === 'Selesai') statusBadge = 'bg-emerald-100 text-emerald-800';
         if (item.status === 'Ditolak') statusBadge = 'bg-rose-100 text-rose-800';
 
-        const badgeDurasi = (item.status === 'Selesai' && item.durasi && item.durasi !== '-')
-          ? `<span class="inline-block bg-indigo-50 text-indigo-800 border border-indigo-200 font-extrabold px-2.5 py-1 rounded-lg">⏱️ ${item.durasi}</span>`
-          : `<span class="text-slate-400 italic">Belum selesai</span>`;
+        // Kolom Waktu Pengajuan s.d. Diproses
+        const kolomRespon = (item.durasiRespon && item.durasiRespon !== '-')
+          ? `<span class="inline-block bg-blue-50 text-blue-800 border border-blue-200 font-extrabold px-2.5 py-1 rounded-lg">⚡ ${item.durasiRespon}</span><br><span class="text-[11px] text-slate-500">Diproses: ${item.tanggalDiproses}</span>`
+          : `<span class="text-slate-400 italic">Belum diproses</span>`;
+
+        // Kolom Total Durasi & Status Estimasi 24 Jam
+        let kolomDurasiEstimasi = `<span class="text-slate-400 italic">Estimasi: 24 Jam (1 Hari Kerja)</span>`;
+        if (item.status === 'Selesai' && item.durasi && item.durasi !== '-') {
+          if (item.melebihiEstimasi) {
+            kolomDurasiEstimasi = `
+              <span class="inline-block bg-rose-100 text-rose-900 border border-rose-300 font-extrabold px-2.5 py-1 rounded-lg">⏱️ ${item.durasi}</span>
+              <div class="mt-1 text-[11px] text-rose-700 font-extrabold leading-snug">
+                ⚠️ Melebihi Estimasi (24 Jam) — Pemohon berhak mendapatkan kompensasi.
+              </div>
+            `;
+          } else {
+            kolomDurasiEstimasi = `
+              <span class="inline-block bg-emerald-50 text-emerald-800 border border-emerald-200 font-extrabold px-2.5 py-1 rounded-lg">⏱️ ${item.durasi}</span>
+              <div class="mt-1 text-[11px] text-emerald-700 font-bold">✅ Tepat Waktu (≤ 24 Jam)</div>
+            `;
+          }
+        } else if (item.melewatiBatasBerjalan) {
+          kolomDurasiEstimasi = `
+            <span class="inline-block bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-2.5 py-1 rounded-lg">⏳ Melewati 24 Jam</span>
+            <div class="mt-1 text-[11px] text-amber-800 font-bold">Belum selesai (Melewati estimasi 1 hari kerja)</div>
+          `;
+        }
 
         return `
-          <tr class="hover:bg-slate-50">
+          <tr class="hover:bg-slate-50 ${item.melebihiEstimasi ? 'bg-rose-50/40' : ''}">
             <td class="p-3 font-bold text-slate-900">${item.kode}</td>
             <td class="p-3"><b>${item.nama}</b><br><span class="text-slate-500">${item.email}</span></td>
             <td class="p-3"><span class="text-[11px] bg-slate-100 px-2 py-0.5 rounded font-semibold">${item.kategori}</span><br><b>${item.layanan}</b></td>
             <td class="p-3 font-semibold text-slate-700">${item.tanggalMasuk || item.tanggal}</td>
+            <td class="p-3">${kolomRespon}</td>
             <td class="p-3 font-semibold ${item.tanggalSelesai !== '-' ? 'text-emerald-700' : 'text-slate-400'}">${item.tanggalSelesai || '-'}</td>
-            <td class="p-3">${badgeDurasi}</td>
+            <td class="p-3">${kolomDurasiEstimasi}</td>
             <td class="p-3"><span class="font-bold px-2.5 py-1 rounded-full ${statusBadge}">${item.status}</span></td>
             <td class="p-3 space-y-1">
               ${item.berkas !== '-' ? `<a href="${item.berkas}" target="_blank" class="block text-blue-600 underline font-semibold">📄 Berkas Masuk</a>` : ''}
